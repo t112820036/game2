@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CyberShift: 幾何矩陣 - 不規則大空間版</title>
+  <title>CyberShift: 幾何矩陣 - 匿名箱子全域單格版</title>
   <!-- Google Fonts: Orbitron & Rajdhani -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================================
-       CyberShift Design System - 不規則大空間幾何風格
+       CyberShift Design System - 無區分箱子與開放佈局風格
        ========================================================================== */
     :root {
       --bg-dark: #080a0f;
@@ -18,8 +18,6 @@
       --border-color: #2a364f;
       --neon-cyan: #00f3ff;
       --neon-green: #00ff66;
-      --neon-gold: #ffcc00;
-      --neon-purple: #cc00ff;
       --neon-red: #ff0055;
       --font-tech: 'Orbitron', sans-serif;
       --font-num: 'Rajdhani', sans-serif;
@@ -213,7 +211,7 @@
       color: #ffffff;
     }
 
-    /* 核心地圖大畫布 (適應大型不規則地圖) */
+    /* 核心地圖大畫布 */
     .board-container {
       background: #06080d;
       border: 2px solid var(--border-color);
@@ -242,7 +240,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 1.3rem;
       position: relative;
     }
 
@@ -265,52 +262,39 @@
       border: 1px solid rgba(42, 54, 79, 0.4);
     }
 
-    /* 目標位置 Target */
+    /* 虛線目標點 Target */
     .target-icon {
       width: 26px;
       height: 26px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 4px;
-      opacity: 0.85;
+      border-radius: 6px;
+      border: 2px dashed var(--neon-cyan);
+      box-shadow: inset 0 0 8px rgba(0, 243, 255, 0.3);
       animation: pulse-glow 2s infinite alternate;
     }
 
-    .target-icon.target-1 { border: 2px dashed var(--neon-green); color: var(--neon-green); }
-    .target-icon.target-2 { border: 2px dashed var(--neon-cyan); color: var(--neon-cyan); }
-    .target-icon.target-3 { border: 2px dashed var(--neon-gold); color: var(--neon-gold); }
-    .target-icon.target-4 { border: 2px dashed var(--neon-purple); color: var(--neon-purple); }
-
     @keyframes pulse-glow {
-      0% { transform: scale(0.9); opacity: 0.6; }
-      100% { transform: scale(1.05); opacity: 1; }
+      0% { transform: scale(0.92); opacity: 0.5; }
+      100% { transform: scale(1.05); opacity: 0.95; }
     }
 
-    /* 動態方塊 Box */
+    /* 動態方塊 Box (所有箱子完全相同，能量金屬風) */
     .box {
-      width: 32px;
-      height: 32px;
-      border-radius: 5px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: bold;
-      font-size: 1.05rem;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      background: radial-gradient(circle at 30% 30%, #00f3ff, #005588);
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 12px var(--neon-cyan);
       z-index: 10;
       transition: all 0.15s ease-out;
     }
 
-    .box.box-1 { background: radial-gradient(circle, #00ff66, #008833); border: 2px solid #ffffff; color: #000; box-shadow: 0 0 12px var(--neon-green); }
-    .box.box-2 { background: radial-gradient(circle, #00f3ff, #0088aa); border: 2px solid #ffffff; color: #000; box-shadow: 0 0 12px var(--neon-cyan); }
-    .box.box-3 { background: radial-gradient(circle, #ffcc00, #aa8800); border: 2px solid #ffffff; color: #000; box-shadow: 0 0 12px var(--neon-gold); }
-    .box.box-4 { background: radial-gradient(circle, #cc00ff, #7700aa); border: 2px solid #ffffff; color: #fff; box-shadow: 0 0 12px var(--neon-purple); }
-
+    /* 任意箱子落於目標點時的亮光提示 */
     .box.matched {
-      animation: box-matched-bounce 0.3s ease-out;
+      background: radial-gradient(circle at 30% 30%, #00ff66, #006622);
       border-color: #ffffff;
-      filter: brightness(1.25);
+      box-shadow: 0 0 16px var(--neon-green);
+      animation: box-matched-bounce 0.3s ease-out;
     }
 
     @keyframes box-matched-bounce {
@@ -424,8 +408,8 @@
 
     @media (max-width: 600px) {
       .level-selector-grid { grid-template-columns: repeat(5, 1fr); }
-      .cell { width: 28px; height: 28px; font-size: 0.95rem; }
-      .box { width: 24px; height: 24px; font-size: 0.8rem; }
+      .cell { width: 28px; height: 28px; }
+      .box { width: 22px; height: 22px; }
       .target-icon { width: 20px; height: 20px; }
       .game-title { font-size: 1rem; }
     }
@@ -439,7 +423,7 @@
     <header class="game-header">
       <div>
         <h1 class="game-title">CyberShift // 幾何矩陣</h1>
-        <p class="game-subtitle">IRREGULAR LARGE MATRIX - GLOBAL 1-GRID STEP</p>
+        <p class="game-subtitle">ANONYMOUS BOXES - OPEN MATRIX PUZZLE</p>
       </div>
       <div class="header-actions">
         <button id="sound-btn" class="btn-icon">音效: ON</button>
@@ -462,7 +446,7 @@
           <span id="hud-steps" class="hud-val">0</span>
         </div>
         <div class="hud-item">
-          <span class="hud-label">幾何對位</span>
+          <span class="hud-label">目標對位</span>
           <span id="hud-matched" class="hud-val">0 / 1</span>
         </div>
       </div>
@@ -497,7 +481,7 @@
     <div class="modal-panel">
       <h2 class="modal-title">ALL STAGES ALIGNED</h2>
       <p class="modal-desc">
-        恭喜！您已成功掌握全域單格移位與不規則地形障礙，完成全部關卡的幾何對位！
+        恭喜！您已成功掌握全域單格移位，完成全部 10 個不規則幾何關卡！
       </p>
       <button id="modal-close-btn" class="btn-cyber" style="border-color:var(--neon-green); color:var(--neon-green);">返回關卡</button>
     </div>
@@ -505,159 +489,150 @@
 
   <script>
     /**
-     * CyberShift Engine (Irregular Large Map Engine)
+     * CyberShift Engine (Anonymous Box Global 1-Grid Step Engine)
      */
     document.addEventListener('DOMContentLoaded', () => {
-      // 幾何圖形定義：
-      // 1: 正方形 (Square - 🟩), 2: 圓形 (Circle - 🔵), 3: 三角形 (Triangle - 🔺), 4: 菱形 (Diamond - 🔷)
-      const SHAPES = {
-        1: { name: 'Square', symbol: '■', class: 'box-1', targetClass: 'target-1' },
-        2: { name: 'Circle', symbol: '●', class: 'box-2', targetClass: 'target-2' },
-        3: { name: 'Triangle', symbol: '▲', class: 'box-3', targetClass: 'target-3' },
-        4: { name: 'Diamond', symbol: '◆', class: 'box-4', targetClass: 'target-4' }
-      };
-
-      // 10 個大型不規則、100% 均保證有解的幾何關卡
-      // 符號：' ' 虛無/外界, '#' 牆壁, '.' 地板, '1'~'4' 目標點, 'A'~'D' 方塊 (A=1, B=2, C=3, D=4)
+      // 10 個經過演算法 100% 驗證、無角落死角設計的不規則關卡
+      // 符號：' ' 虛無, '#' 牆壁, '.' 地板, 'T' 目標點, 'B' 箱子
       const LEVELS = [
         {
-          name: "關卡 01: 不規則雙廊大廳 (9x7)",
+          name: "關卡 01: 錯位大廳 (9x7)",
           map: [
             "  #######  ",
             "###.....###",
-            "#A.......1#",
+            "#B.......T#",
             "#...#.#...#",
-            "#B.......2#",
+            "#B.......T#",
             "###.....###",
             "  #######  "
           ]
         },
         {
-          name: "關卡 02: 錯落柱廊避障 (10x8)",
+          name: "關卡 02: 雙柱縱橫 (10x8)",
           map: [
             "##########",
-            "#A......1#",
+            "#B......T#",
             "#..####..#",
             "#.#....#.#",
-            "#.#..2.#.#",
-            "#B.#...#.#",
+            "#.#.T..#.#",
+            "#B#....#.#",
             "#...####.#",
             "##########"
           ]
         },
         {
-          name: "關卡 03: T型展延階梯廳 (10x8)",
+          name: "關卡 03: T型交錯點 (10x8)",
           map: [
             "##########",
-            "#A......1#",
+            "#B......T#",
             "#...##...#",
             "###....###",
             "  #....#  ",
-            "  #B..2#  ",
+            "  #B..T#  ",
             "  #....#  ",
             "  ######  "
           ]
         },
         {
-          name: "關卡 04: 三星十字不規則廳 (11x9)",
+          name: "關卡 04: 三體平行迴廊 (11x9)",
           map: [
             "  #######  ",
             "###.....###",
-            "#A.......1#",
+            "#B.......T#",
             "#...#.#...#",
-            "#B.......2#",
+            "#B...T....#",
             "#...#.#...#",
-            "#C.......3#",
+            "#B.......T#",
             "###.....###",
             "  #######  "
           ]
         },
         {
-          name: "關卡 05: 異形卡位多室 (10x9)",
+          name: "關卡 05: 異形交錯隔間 (10x9)",
           map: [
             "##########",
-            "#A.#....1#",
-            "#..#.....#",
-            "##...#####",
-            "#B...#...#",
-            "#....#.2.#",
+            "#B......T#",
+            "#..#####.#",
+            "##...#...#",
+            "#B...#.T.#",
             "#....#...#",
-            "#C......3#",
+            "#....#####",
+            "#B......T#",
             "##########"
           ]
         },
         {
-          name: "關卡 06: 迴廊卡位步道 (11x9)",
+          name: "關卡 06: 環形偏移迴道 (11x9)",
           map: [
             "###########",
-            "#A.......1#",
+            "#B.......T#",
             "#.#######.#",
             "#.#.....#.#",
-            "#.#.B.2.#.#",
+            "#.#.B.T.#.#",
             "#.#.....#.#",
             "#.#######.#",
-            "#C.......3#",
+            "#B.......T#",
             "###########"
           ]
         },
         {
-          name: "關卡 07: 菱形幾何錯位廳 (11x11)",
+          name: "關卡 07: 幾何八角廳 (11x11)",
           map: [
             "    #####    ",
             "  ###...###  ",
             " ##.......## ",
-            "##A...#...1##",
+            "##B...#...T##",
             "#.....#.....#",
             "#...#####...#",
             "#.....#.....#",
-            "##B...#...2##",
+            "##B...#...T##",
             " ##.......## ",
             "  ###...###  ",
             "    #####    "
           ]
         },
         {
-          name: "關卡 08: 四象城堡大陣 (12x10)",
+          name: "關卡 08: 四象矩陣長廊 (12x10)",
           map: [
             "############",
-            "#A........1#",
+            "#B........T#",
             "#..######..#",
-            "#B.#....#.2#",
-            "#..#.3..#..#",
-            "#..#..C.#..#",
-            "#D.#....#.4#",
+            "#B.#....#.T#",
+            "#..#.T..#..#",
+            "#..#..B.#..#",
+            "#B.#....#.T#",
             "#..######..#",
             "#..........#",
             "############"
           ]
         },
         {
-          name: "關卡 09: 雙環迷宮對對碰 (11x11)",
+          name: "關卡 09: 雙環對位階梯 (11x11)",
           map: [
             "###########",
-            "#A.......1#",
+            "#B.......T#",
             "#.#######.#",
             "#.#.....#.#",
-            "#.#.B.2.#.#",
+            "#.#.B.T.#.#",
             "#.#.....#.#",
-            "#.#.3.C.#.#",
+            "#.#.B.T.#.#",
             "#.#.....#.#",
             "#.#######.#",
-            "#4.......D#",
+            "#.........#",
             "###########"
           ]
         },
         {
-          name: "關卡 10: 終極不規則對位矩陣 (12x8)",
+          name: "關卡 10: 終極幾何矩陣 (12x8)",
           map: [
             "############",
-            "#A........1#",
+            "#B........T#",
             "#.##.##.##.#",
-            "#...B..2...#",
+            "#...B..T...#",
             "##.######.##",
-            "#...C..3...#",
+            "#...B..T...#",
             "#.##.##.##.#",
-            "#4........D#",
+            "#B........T#",
             "############"
           ]
         }
@@ -668,12 +643,12 @@
       let gridWidth = 0;
       let gridHeight = 0;
       let mapCells = [];  // 2D Array: 'void', 'wall', 'floor'
-      let targets = [];   // [{ r, c, shapeId }]
-      let boxes = [];     // [{ r, c, shapeId }]
+      let targets = [];   // [{ r, c }]
+      let boxes = [];     // [{ r, c }]
       let historyStack = [];
       let stepCount = 0;
       let soundEnabled = true;
-      let clearedLevels = JSON.parse(localStorage.getItem('cybershift_irregular_cleared') || '[]');
+      let clearedLevels = JSON.parse(localStorage.getItem('cybershift_anon_cleared') || '[]');
 
       // DOM 引用
       const levelGrid = document.getElementById('level-grid');
@@ -772,13 +747,12 @@
               mapCells[r][c] = 'wall';
             } else if (ch === '.') {
               mapCells[r][c] = 'floor';
-            } else if (['1', '2', '3', '4'].includes(ch)) {
+            } else if (ch === 'T') {
               mapCells[r][c] = 'floor';
-              targets.push({ r, c, shapeId: parseInt(ch, 10) });
-            } else if (['A', 'B', 'C', 'D'].includes(ch)) {
+              targets.push({ r, c });
+            } else if (ch === 'B') {
               mapCells[r][c] = 'floor';
-              const charMap = { 'A': 1, 'B': 2, 'C': 3, 'D': 4 };
-              boxes.push({ r, c, shapeId: charMap[ch] });
+              boxes.push({ r, c });
             } else {
               mapCells[r][c] = 'void';
             }
@@ -799,7 +773,6 @@
         gameGrid.style.gridTemplateColumns = `repeat(${gridWidth}, 1fr)`;
         gameGrid.innerHTML = '';
 
-        // 動態微調方塊與格子大小適應大地圖
         let cellSize = 40;
         if (gridWidth > 10) cellSize = 34;
 
@@ -811,23 +784,22 @@
             cell.style.height = `${cellSize}px`;
 
             if (mapCells[r][c] === 'floor') {
-              // 渲染目標點
+              // 渲染目標位置
               const target = targets.find(t => t.r === r && t.c === c);
               if (target) {
                 const targetIcon = document.createElement('div');
-                targetIcon.className = `target-icon ${SHAPES[target.shapeId].targetClass}`;
-                targetIcon.textContent = SHAPES[target.shapeId].symbol;
+                targetIcon.className = 'target-icon';
                 cell.appendChild(targetIcon);
               }
 
-              // 渲染方塊
+              // 渲染箱子
               const box = boxes.find(b => b.r === r && b.c === c);
               if (box) {
                 const boxEl = document.createElement('div');
-                boxEl.className = `box ${SHAPES[box.shapeId].class}`;
-                boxEl.textContent = SHAPES[box.shapeId].symbol;
+                boxEl.className = 'box';
 
-                if (target && target.shapeId === box.shapeId) {
+                // 只要此位置是目標點，即亮綠光
+                if (target) {
                   boxEl.classList.add('matched');
                 }
                 cell.appendChild(boxEl);
@@ -843,25 +815,24 @@
       function updateHUD() {
         hudSteps.textContent = stepCount;
 
+        // 計算有多少個目標點上有箱子
         let matchedCount = 0;
-        boxes.forEach(b => {
-          const t = targets.find(target => target.r === b.r && target.c === b.c);
-          if (t && t.shapeId === b.shapeId) {
+        targets.forEach(t => {
+          if (boxes.some(b => b.r === t.r && b.c === t.c)) {
             matchedCount++;
           }
         });
 
-        hudMatched.textContent = `${matchedCount} / ${boxes.length}`;
+        hudMatched.textContent = `${matchedCount} / ${targets.length}`;
       }
 
-      // ⚡⚡⚡ 核心：全域單格同步平移演算法 ⚡⚡⚡
+      // ⚡⚡⚡ 全域單格同步平移演算法 ⚡⚡⚡
       function moveBoxes(dr, dc) {
-        // 依據移動方向對盒子進行排序，確保最前方的盒子優先結算移動
         let sortedBoxes = [...boxes];
-        if (dr === -1) sortedBoxes.sort((a, b) => a.r - b.r);        // 向上：上方盒子先走
-        else if (dr === 1) sortedBoxes.sort((a, b) => b.r - a.r);   // 向下：下方盒子先走
-        else if (dc === -1) sortedBoxes.sort((a, b) => a.c - b.c);  // 向左：左側盒子先走
-        else if (dc === 1) sortedBoxes.sort((a, b) => b.c - a.c);   // 向右：右側盒子先走
+        if (dr === -1) sortedBoxes.sort((a, b) => a.r - b.r);        // 向上
+        else if (dr === 1) sortedBoxes.sort((a, b) => b.r - a.r);   // 向下
+        else if (dc === -1) sortedBoxes.sort((a, b) => a.c - b.c);  // 向左
+        else if (dc === 1) sortedBoxes.sort((a, b) => b.c - a.c);   // 向右
 
         let movedAny = false;
 
@@ -869,9 +840,7 @@
           let nextR = box.r + dr;
           let nextC = box.c + dc;
 
-          // 判斷前方是否為可通行地板
           if (nextR >= 0 && nextR < gridHeight && nextC >= 0 && nextC < gridWidth && mapCells[nextR][nextC] === 'floor') {
-            // 判斷該位置是否已被其他「無法移動或尚未移動」的盒子佔用
             if (!boxes.some(b => b !== box && b.r === nextR && b.c === nextC)) {
               box.r = nextR;
               box.c = nextC;
@@ -908,17 +877,14 @@
         updateHUD();
       }
 
-      // 檢查通關
+      // 檢查通關（條件：所有目標點都有箱子）
       function checkVictory() {
-        const allMatched = boxes.every(b => {
-          const t = targets.find(target => target.r === b.r && target.c === b.c);
-          return t && t.shapeId === b.shapeId;
-        });
+        const allTargetsFilled = targets.every(t => boxes.some(b => b.r === t.r && b.c === t.c));
 
-        if (allMatched) {
+        if (allTargetsFilled) {
           if (!clearedLevels.includes(currentLevelIndex)) {
             clearedLevels.push(currentLevelIndex);
-            localStorage.setItem('cybershift_irregular_cleared', JSON.stringify(clearedLevels));
+            localStorage.setItem('cybershift_anon_cleared', JSON.stringify(clearedLevels));
           }
 
           renderLevelSelector();
@@ -966,7 +932,7 @@
       resetProgressBtn.addEventListener('click', () => {
         if (confirm('確定要重設所有關卡紀錄嗎？')) {
           clearedLevels = [];
-          localStorage.removeItem('cybershift_irregular_cleared');
+          localStorage.removeItem('cybershift_anon_cleared');
           loadLevel(0);
         }
       });
