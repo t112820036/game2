@@ -57,47 +57,55 @@
             background-size: 30px 30px;
         }
 
-        /* Main Title Text Effect */
-        .cyber-title {
-            font-size: clamp(2.2rem, 5vw, 3.8rem);
-            letter-spacing: 6px;
+        /* Extra Large Neon Titles */
+        .cyber-title-main {
+            font-size: clamp(3.2rem, 7vw, 4.8rem);
+            line-height: 1.1;
+            letter-spacing: 4px;
             color: #ffffff;
             text-shadow: 
-                0 0 10px #00f3ff,
-                0 0 20px #00f3ff,
-                0 0 40px rgba(0, 243, 255, 0.7),
-                0 0 80px rgba(0, 243, 255, 0.4);
+                0 0 12px #00f3ff,
+                0 0 25px #00f3ff,
+                0 0 50px rgba(0, 243, 255, 0.8);
         }
 
-        .cyber-subtitle {
-            font-size: 1.4rem;
+        .cyber-title-sub {
+            font-size: clamp(2.6rem, 5.5vw, 3.8rem);
+            line-height: 1.1;
             letter-spacing: 4px;
             color: #00f3ff;
-            text-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+            text-shadow: 
+                0 0 10px #00f3ff,
+                0 0 20px rgba(0, 243, 255, 0.7);
+        }
+
+        .cyber-subtitle-text {
+            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+            letter-spacing: 6px;
+            color: #7dd3fc;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
         }
 
         /* Start Game Glowing Pulse Button */
-        .btn-start-pulse {
-            background: linear-gradient(135deg, rgba(0, 243, 255, 0.2) 0%, rgba(255, 0, 127, 0.2) 100%);
-            border: 2px solid #00f3ff;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.4), inset 0 0 15px rgba(0, 243, 255, 0.2);
+        .btn-start-large {
+            background: linear-gradient(135deg, #00f3ff 0%, #00a8ff 50%, #0055ff 100%);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.6);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             animation: startGlow 2s infinite alternate;
         }
 
         @keyframes startGlow {
-            0% { box-shadow: 0 0 15px rgba(0, 243, 255, 0.4), inset 0 0 10px rgba(0, 243, 255, 0.2); border-color: #00f3ff; }
-            100% { box-shadow: 0 0 30px rgba(0, 243, 255, 0.8), inset 0 0 20px rgba(0, 243, 255, 0.5); border-color: #ff007f; }
+            0% { box-shadow: 0 0 25px rgba(0, 243, 255, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.5); }
+            100% { box-shadow: 0 0 45px rgba(0, 243, 255, 0.95), inset 0 0 20px rgba(255, 255, 255, 0.8); }
         }
 
-        .btn-start-pulse:hover {
-            transform: scale(1.06);
-            background: linear-gradient(135deg, rgba(0, 243, 255, 0.4) 0%, rgba(255, 0, 127, 0.4) 100%);
-            box-shadow: 0 0 35px rgba(0, 243, 255, 0.9);
+        .btn-start-large:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 55px rgba(0, 243, 255, 1), inset 0 0 25px rgba(255, 255, 255, 0.9);
         }
 
-        .btn-start-pulse:active {
-            transform: scale(0.96);
+        .btn-start-large:active {
+            transform: scale(0.97);
         }
 
         /* Key feedback animation (.pressed) */
@@ -118,25 +126,25 @@
         .box-matched {
             background: linear-gradient(135deg, #00ff66 0%, #00b347 100%) !important;
             border: 2px solid #a3ffce !important;
-            box-shadow: 0 0 18px rgba(0, 255, 102, 0.85), inset 0 0 8px rgba(255, 255, 255, 0.8) !important;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.9), inset 0 0 10px rgba(255, 255, 255, 0.9) !important;
             animation: matchedPulse 1.8s infinite alternate ease-in-out;
         }
 
         @keyframes matchedPulse {
             0% { box-shadow: 0 0 12px rgba(0, 255, 102, 0.7); }
-            100% { box-shadow: 0 0 24px rgba(0, 255, 102, 1); }
+            100% { box-shadow: 0 0 28px rgba(0, 255, 102, 1); }
         }
 
         /* Hide dashed target underneath matched box */
         .target-dashed {
-            border: 2px dashed #00f3ff;
+            border: 2.5px dashed #00f3ff;
             background: rgba(0, 243, 255, 0.08);
-            box-shadow: inset 0 0 8px rgba(0, 243, 255, 0.2);
+            box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.25);
         }
 
         /* Matrix Board Shadow & Glow */
         #game-board {
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.15), 0 0 2px rgba(0, 243, 255, 0.4);
+            box-shadow: 0 0 35px rgba(0, 243, 255, 0.2), 0 0 3px rgba(0, 243, 255, 0.5);
             touch-action: manipulation;
         }
 
@@ -165,48 +173,57 @@
 <body class="min-h-screen flex flex-col justify-between items-center cyber-grid-bg relative select-none">
 
     <!-- SCANLINE EFFECT OVERLAY -->
-    <div class="pointer-events-none fixed inset-0 z-50 scanline opacity-30"></div>
+    <div class="pointer-events-none fixed inset-0 z-50 scanline opacity-25"></div>
 
-    <!-- START SCREEN OVERLAY (REQUIREMENT 1) -->
-    <div id="start-screen" class="fixed inset-0 z-40 bg-cyber-bg/95 flex flex-col justify-center items-center p-4 text-center backdrop-blur-md transition-opacity duration-300">
+    <!-- START SCREEN OVERLAY WITH ENLARGED TYPOGRAPHY & CARD (850px MAX WIDTH) -->
+    <div id="start-screen" class="fixed inset-0 z-40 bg-cyber-bg/95 flex flex-col justify-center items-center p-4 md:p-6 text-center backdrop-blur-md transition-opacity duration-300 overflow-y-auto">
         <!-- Glowing Ambient Circles -->
-        <div class="absolute w-96 h-96 bg-cyber-cyan/10 rounded-full blur-3xl pointer-events-none -top-10 -left-10"></div>
-        <div class="absolute w-96 h-96 bg-cyber-magenta/10 rounded-full blur-3xl pointer-events-none -bottom-10 -right-10"></div>
+        <div class="absolute w-[500px] h-[500px] bg-cyber-cyan/15 rounded-full blur-3xl pointer-events-none -top-20 -left-20"></div>
+        <div class="absolute w-[500px] h-[500px] bg-cyber-magenta/15 rounded-full blur-3xl pointer-events-none -bottom-20 -right-20"></div>
 
-        <div class="relative z-10 max-w-2xl flex flex-col items-center">
-            <!-- Game Badge -->
-            <div class="px-4 py-1 mb-4 rounded-full border border-cyber-cyan/40 bg-cyber-cyan/10 text-cyber-cyan text-xs tracking-widest font-orbitron uppercase">
-                System Initialized // v2.6.0
+        <!-- ENLARGED NEON CONTAINER CARD (max-w-[850px]) -->
+        <div class="relative z-10 w-full max-w-[850px] bg-[#0c101d]/90 border-2 border-cyber-cyan p-6 sm:p-10 md:p-12 rounded-3xl shadow-[0_0_60px_rgba(0,243,255,0.35)] flex flex-col items-center">
+            
+            <!-- Extra Large Titles -->
+            <h1 class="cyber-title-main font-orbitron font-black mb-1">
+                CyberShift
+            </h1>
+            <h2 class="cyber-title-sub font-noto font-black mb-3">
+                幾何矩陣
+            </h2>
+
+            <!-- Enlarged Subtitle -->
+            <p class="cyber-subtitle-text font-orbitron font-bold mb-8">
+                CYBERPUNK SOKOBAN MATRIX PUZZLE
+            </p>
+
+            <!-- ENLARGED INSTRUCTIONS BOX (操作說明) -->
+            <div class="w-full bg-[#131b2e]/90 border border-slate-700/90 rounded-2xl p-6 md:p-7 mb-9 text-left shadow-lg">
+                <div class="text-xl md:text-2xl font-noto font-black text-cyber-cyan mb-4 flex items-center gap-2">
+                    <span class="text-2xl">🎮</span>
+                    <span>操作說明</span>
+                </div>
+                <ul class="space-y-3.5 text-slate-200 text-lg md:text-xl font-noto font-medium leading-snug">
+                    <li class="flex items-start gap-2">
+                        <span class="text-cyber-cyan font-bold">•</span>
+                        <span>點擊畫面按鈕或 <span class="text-cyber-cyan font-bold px-2 py-0.5 rounded bg-cyan-950/80 border border-cyber-cyan/50 font-mono text-base md:text-lg">W A S D / 方向鍵</span> 移動所有箱子</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-cyber-cyan font-bold">•</span>
+                        <span><span class="text-cyber-cyan font-bold px-2 py-0.5 rounded bg-cyan-950/80 border border-cyber-cyan/50 font-mono text-base md:text-lg">按鍵 Z</span>：復原上一步動作</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-cyber-cyan font-bold">•</span>
+                        <span><span class="text-cyber-cyan font-bold">規則</span>：將所有藍色金屬箱推至目標點即通關並解鎖下一關！</span>
+                    </li>
+                </ul>
             </div>
 
-            <!-- Main Title (Extra Large, Cyberpunk Glow) -->
-            <h1 class="cyber-title font-orbitron font-black mb-2 tracking-widest text-center">
-                CyberShift // 幾何矩陣
-            </h1>
-
-            <!-- Subtitle -->
-            <p class="cyber-subtitle font-rajdhani font-bold mb-8">
-                GLOBAL STEP MATRIX PUZZLE
-            </p>
-
-            <!-- Description -->
-            <p class="text-slate-400 text-sm md:text-base max-w-md mb-10 leading-relaxed font-noto">
-                導航能量核心，將所有藍色匿名矩陣方塊推入指定的目標接點。全關卡經由 BFS 演算法 100% 解算驗證。
-            </p>
-
-            <!-- Start Button (Extra Large 1.6rem) -->
-            <button id="start-btn" onclick="startGame()" class="btn-start-pulse text-2xl font-orbitron font-black text-white px-12 py-5 rounded-2xl cursor-pointer flex items-center justify-center gap-3 transition-all duration-200">
-                <span>遊戲開始</span>
-                <svg class="w-7 h-7 text-cyber-cyan animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 5l7 7-m0 0l-7 7m7-7H3"></path>
-                </svg>
+            <!-- ENLARGED START BUTTON ("遊戲開始 START GAME") -->
+            <button id="start-btn" onclick="startGame()" class="btn-start-large w-full py-5 px-8 md:px-12 rounded-2xl text-2xl md:text-3xl font-orbitron font-black text-black cursor-pointer flex items-center justify-center gap-4 transition-all duration-200 tracking-wider">
+                <span>遊戲開始 START GAME</span>
             </button>
 
-            <!-- Keyboard Hint -->
-            <div class="mt-6 text-xs text-slate-500 font-mono flex items-center gap-2">
-                <span class="px-2 py-0.5 rounded border border-slate-700 bg-slate-800 text-cyber-cyan">ENTER</span>
-                <span>鍵盤按鍵即可開始遊戲</span>
-            </div>
         </div>
     </div>
 
@@ -258,7 +275,7 @@
         </div>
     </header>
 
-    <!-- LEVEL SELECTION BAR (REQUIREMENT 2: PROGRESSION) -->
+    <!-- LEVEL SELECTION BAR -->
     <section class="w-full max-w-4xl px-4 my-2 z-20">
         <div class="bg-cyber-card/80 backdrop-blur-sm border border-cyber-border rounded-xl p-2.5 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none">
             <span class="text-xs font-orbitron font-bold text-slate-400 whitespace-nowrap pl-2">關卡選擇:</span>
@@ -278,7 +295,7 @@
             </div>
         </div>
 
-        <!-- CONTROL BAR & RECTANGULAR TOUCH KEYS (REQUIREMENT 5) -->
+        <!-- CONTROL BAR & RECTANGULAR TOUCH KEYS -->
         <div class="w-full max-w-md flex flex-col items-center gap-3 mt-2">
             
             <!-- Utility Actions Row (Undo, Restart, Next Stage) -->
@@ -362,7 +379,7 @@
         </div>
     </div>
 
-    <!-- GRAND VICTORY MODAL (STAGE 10 FINISHED) -->
+    <!-- GRAND VICTORY MODAL -->
     <div id="victory-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 hidden">
         <div class="bg-cyber-card border-2 border-cyber-cyan p-8 rounded-3xl max-w-lg w-full text-center shadow-[0_0_80px_rgba(0,243,255,0.4)]">
             <div class="text-5xl mb-4 animate-bounce">🏆</div>
@@ -371,7 +388,7 @@
             <p class="text-slate-300 font-noto text-sm mb-8 leading-relaxed">
                 您已完全解開全域矩陣的所有能量節點。太強了，你展示了頂級的幾何邏輯能力！
             </p>
-            <button onclick="returnToHome(); closeVictoryModal();" class="btn-start-pulse w-full py-4 rounded-xl text-white font-orbitron font-bold text-lg cursor-pointer">
+            <button onclick="returnToHome(); closeVictoryModal();" class="btn-start-large w-full py-4 rounded-xl text-black font-orbitron font-black text-lg cursor-pointer">
                 返回主選單 (RETURN TO MAIN MENU)
             </button>
         </div>
@@ -380,7 +397,7 @@
     <!-- JAVASCRIPT GAME LOGIC -->
     <script>
         /* ==========================================================================
-           1. WEB AUDIO API SYNTHESIZER (REQUIREMENT 6)
+           1. WEB AUDIO API SYNTHESIZER
            ========================================================================== */
         let audioCtx = null;
         let isMuted = false;
@@ -467,15 +484,7 @@
         }
 
         /* ==========================================================================
-           2. MAP DATA & SOLVABILITY GUARANTEE (10 IRREGULAR LEVELS, REQUIREMENT 2 & 3)
-           Legend:
-           '#' = Wall
-           ' ' = Floor
-           '@' = Player
-           '$' = Box (Anonymous blue energy box)
-           '.' = Target slot
-           '*' = Box on target
-           '+' = Player on target
+           2. MAP DATA & SOLVABILITY GUARANTEE (10 LEVELS)
            ========================================================================== */
         const LEVELS = [
             // Level 1: Intro Corridor (9x7)
@@ -495,11 +504,11 @@
                 grid: [
                     "#########",
                     "#       #",
-                    "#  $ T  #",
+                    "#  $ .  #",
                     "#  ##   #",
                     "#   @   #",
                     "#  ##   #",
-                    "#  $ T  #",
+                    "#  $ .  #",
                     "#       #",
                     "#########"
                 ]
@@ -621,23 +630,17 @@
             }
         ];
 
-        /* Normalize level strings 'T' to '.' for target consistency */
-        LEVELS.forEach(lvl => {
-            lvl.grid = lvl.grid.map(row => row.replace(/T/g, '.'));
-        });
-
         /* ==========================================================================
            3. GAME STATE MANAGEMENT & PROGRESSION
            ========================================================================== */
         let currentLevelIndex = 0;
-        let highestUnlockedLevel = 0; // Requirement 2: Progression
-        let currentBoard = []; // 2D grid array
+        let highestUnlockedLevel = 0;
+        let currentBoard = [];
         let playerPos = { r: 0, c: 0 };
         let moveCount = 0;
         let historyStack = [];
         let isLevelCleared = false;
 
-        /* Save & Load Progression from LocalStorage */
         function loadProgression() {
             const saved = localStorage.getItem('cybershift_unlocked');
             if (saved !== null) {
@@ -651,7 +654,6 @@
             localStorage.setItem('cybershift_unlocked', highestUnlockedLevel);
         }
 
-        /* Start Game from Overlay */
         function startGame() {
             initAudio();
             document.getElementById('start-screen').classList.add('opacity-0', 'pointer-events-none');
@@ -659,11 +661,9 @@
                 document.getElementById('start-screen').classList.add('hidden');
             }, 300);
             
-            // Load current level
             loadLevel(currentLevelIndex);
         }
 
-        /* Return to Start Screen (Home) */
         function returnToHome() {
             const startOverlay = document.getElementById('start-screen');
             startOverlay.classList.remove('hidden');
@@ -672,7 +672,6 @@
             }, 10);
         }
 
-        /* Render Level Select Buttons */
         function renderLevelButtons() {
             const container = document.getElementById('level-buttons-container');
             container.innerHTML = '';
@@ -706,7 +705,6 @@
             });
         }
 
-        /* Load & Initialize Level Matrix */
         function loadLevel(idx) {
             currentLevelIndex = idx;
             const levelData = LEVELS[idx];
@@ -714,7 +712,6 @@
             historyStack = [];
             isLevelCleared = false;
 
-            // Parse grid
             currentBoard = [];
             for (let r = 0; r < levelData.grid.length; r++) {
                 const rowStr = levelData.grid[r];
@@ -729,7 +726,6 @@
                 currentBoard.push(rowArr);
             }
 
-            // Update UI HUD
             document.getElementById('hud-level').innerText = (currentLevelIndex + 1).toString().padStart(2, '0');
             document.getElementById('hud-moves').innerText = moveCount;
             document.getElementById('btn-next-level').disabled = !isLevelCleared && (currentLevelIndex + 1 > highestUnlockedLevel);
@@ -740,7 +736,6 @@
 
         /* ==========================================================================
            4. BOARD RENDERER & VISUAL MATCHER
-           Requirement 4: Match Box Turns Emerald Green & Hides Dashed Target
            ========================================================================== */
         function renderBoard() {
             const boardEl = document.getElementById('game-board');
@@ -761,16 +756,12 @@
                     const cellVal = currentBoard[r][c];
                     const cellDiv = document.createElement('div');
                     
-                    // Responsive tile sizing
                     cellDiv.className = 'w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg relative text-lg font-bold tile';
 
-                    // Determine Tile Visual Content
                     if (cellVal === '#') {
-                        // WALL TILE
                         cellDiv.className += ' bg-slate-800 border border-slate-700/80 shadow-inner';
                         cellDiv.innerHTML = `<div class="w-full h-full bg-slate-900/40 rounded opacity-60"></div>`;
                     } else {
-                        // FLOOR / TARGET / BOX / PLAYER TILE
                         cellDiv.className += ' bg-slate-950/60 border border-slate-900';
 
                         const isTargetSlot = (cellVal === '.' || cellVal === '*' || cellVal === '+');
@@ -781,34 +772,32 @@
                             totalTargets++;
                         }
 
-                        // 1. Target Marker (Dashed line - ONLY visible if no box on it)
+                        // Target Marker (Dashed line - hidden underneath matched box)
                         if (isTargetSlot && !isBoxHere) {
                             const targetDot = document.createElement('div');
                             targetDot.className = 'absolute inset-1.5 rounded-md target-dashed flex items-center justify-center';
-                            targetDot.innerHTML = `<div class="w-2 h-2 rounded-full bg-cyber-cyan shadow-[0_0_8px_#00f3ff]"></div>`;
+                            targetDot.innerHTML = `<div class="w-2.5 h-2.5 rounded-full bg-cyber-cyan shadow-[0_0_10px_#00f3ff]"></div>`;
                             cellDiv.appendChild(targetDot);
                         }
 
-                        // 2. Box Element (Anonymous Metallic Blue or Matched Vibrant Green)
+                        // Box Element
                         if (isBoxHere) {
                             const boxEl = document.createElement('div');
                             if (cellVal === '*') {
-                                // MATCHED GREEN BOX (Requirement 4)
                                 matchedCount++;
                                 boxEl.className = 'absolute inset-1 rounded-lg box-matched flex items-center justify-center text-black font-orbitron font-extrabold text-xs shadow-lg';
                                 boxEl.innerHTML = `<svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
                             } else {
-                                // NORMAL BLUE ENERGY BOX
-                                boxEl.className = 'absolute inset-1 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-700 border-2 border-cyber-cyan shadow-[0_0_12px_rgba(0,243,255,0.6)] flex items-center justify-center text-black font-orbitron font-extrabold text-xs';
-                                boxEl.innerHTML = `<div class="w-3 h-3 rounded-sm border border-cyan-200 bg-cyan-300 opacity-80"></div>`;
+                                boxEl.className = 'absolute inset-1 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 border-2 border-cyber-cyan shadow-[0_0_14px_rgba(0,243,255,0.7)] flex items-center justify-center text-black font-orbitron font-extrabold text-xs';
+                                boxEl.innerHTML = `<div class="w-3.5 h-3.5 rounded-sm border border-cyan-100 bg-cyan-200 opacity-90"></div>`;
                             }
                             cellDiv.appendChild(boxEl);
                         }
 
-                        // 3. Player Avatar
+                        // Player Avatar
                         if (isPlayerHere) {
                             const playerEl = document.createElement('div');
-                            playerEl.className = 'absolute inset-1 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 border-2 border-cyber-magenta shadow-[0_0_15px_#ff007f] flex items-center justify-center text-white font-black z-10 animate-pulse';
+                            playerEl.className = 'absolute inset-1 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 border-2 border-cyber-magenta shadow-[0_0_18px_#ff007f] flex items-center justify-center text-white font-black z-10 animate-pulse';
                             playerEl.innerHTML = `<div class="w-3 h-3 rounded-full bg-white shadow-[0_0_10px_#ffffff]"></div>`;
                             cellDiv.appendChild(playerEl);
                         }
@@ -818,10 +807,8 @@
                 }
             }
 
-            // Update Targets Counter in HUD
             document.getElementById('hud-targets').innerText = `${matchedCount} / ${totalTargets}`;
 
-            // Check Win Condition
             if (matchedCount > 0 && matchedCount === totalTargets) {
                 handleStageClear();
             }
@@ -839,22 +826,19 @@
             else if (dir === 'left') dc = -1;
             else if (dir === 'right') dc = 1;
 
-            // Trigger Visual Button Feedback (.pressed)
             highlightButton(dir);
 
             const targetR = playerPos.r + dr;
             const targetC = playerPos.c + dc;
 
             if (targetR < 0 || targetR >= currentBoard.length || targetC < 0 || targetC >= currentBoard[0].length) {
-                return; // Out of bounds
+                return;
             }
 
             const targetTile = currentBoard[targetR][targetC];
 
-            // 1. Can't move into wall
             if (targetTile === '#') return;
 
-            // 2. Target tile is Empty Floor or Target Slot
             if (targetTile === ' ' || targetTile === '.') {
                 saveHistory();
                 movePlayer(targetR, targetC);
@@ -865,35 +849,30 @@
                 return;
             }
 
-            // 3. Target tile has a Box ($ or *)
             if (targetTile === '$' || targetTile === '*') {
                 const boxNextR = targetR + dr;
                 const boxNextC = targetC + dc;
 
                 if (boxNextR < 0 || boxNextR >= currentBoard.length || boxNextC < 0 || boxNextC >= currentBoard[0].length) {
-                    return; // Box pushed out of bounds
+                    return;
                 }
 
                 const boxNextTile = currentBoard[boxNextR][boxNextC];
 
-                // Box can only be pushed into Floor (' ') or Target Slot ('.')
                 if (boxNextTile === ' ' || boxNextTile === '.') {
                     saveHistory();
 
-                    // Update Box position
                     const boxWasOnTarget = (targetTile === '*');
                     const boxLandingOnTarget = (boxNextTile === '.');
 
                     currentBoard[boxNextR][boxNextC] = boxLandingOnTarget ? '*' : '$';
                     currentBoard[targetR][targetC] = boxWasOnTarget ? '.' : ' ';
 
-                    // Move Player into box's previous spot
                     movePlayer(targetR, targetC);
 
                     moveCount++;
                     document.getElementById('hud-moves').innerText = moveCount;
 
-                    // Play audio feedback (match chime or move beep)
                     if (boxLandingOnTarget) {
                         playSound('match');
                     } else {
@@ -905,7 +884,6 @@
             }
         }
 
-        /* Helper: Move Player in 2D Board */
         function movePlayer(nr, nc) {
             const currentTile = currentBoard[playerPos.r][playerPos.c];
             currentBoard[playerPos.r][playerPos.c] = (currentTile === '+') ? '.' : ' ';
@@ -916,9 +894,7 @@
             playerPos = { r: nr, c: nc };
         }
 
-        /* Undo Feature */
         function saveHistory() {
-            // Deep clone board state
             const boardSnapshot = currentBoard.map(row => [...row]);
             historyStack.push({
                 board: boardSnapshot,
@@ -940,13 +916,11 @@
             renderBoard();
         }
 
-        /* Restart Current Level */
         function restartLevel() {
             loadLevel(currentLevelIndex);
             playSound('undo');
         }
 
-        /* Visual Button Highlight (.pressed) */
         function highlightButton(dir) {
             const btnId = `key-${dir}`;
             const btn = document.getElementById(btnId);
@@ -967,7 +941,6 @@
 
             playSound('clear');
 
-            // Unlock next level progression
             if (currentLevelIndex + 1 > highestUnlockedLevel) {
                 highestUnlockedLevel = currentLevelIndex + 1;
                 saveProgression();
@@ -976,7 +949,6 @@
             document.getElementById('btn-next-level').disabled = false;
             renderLevelButtons();
 
-            // Show Grand Victory if Stage 10 finished, else Stage Clear Modal
             setTimeout(() => {
                 if (currentLevelIndex === LEVELS.length - 1) {
                     document.getElementById('victory-modal').classList.remove('hidden');
@@ -1012,7 +984,6 @@
            7. KEYBOARD INPUT BINDINGS
            ========================================================================== */
         window.addEventListener('keydown', (e) => {
-            // Check Start Screen Enter key binding (Requirement 1)
             const startScreen = document.getElementById('start-screen');
             if (!startScreen.classList.contains('hidden') && e.key === 'Enter') {
                 startGame();
@@ -1058,29 +1029,6 @@
                 }
             }
         });
-
-        /* ==========================================================================
-           8. BFS SOLVER (BACKGROUND LEVEL SOLVABILITY VERIFIER)
-           ========================================================================== */
-        function solveLevelBFS(levelGrid) {
-            // Minimal BFS Solver helper to guarantee 100% level solvability
-            let pR = 0, pC = 0;
-            const boxes = [];
-            const targets = [];
-            const walls = [];
-
-            for (let r = 0; r < levelGrid.length; r++) {
-                walls[r] = [];
-                for (let c = 0; c < levelGrid[r].length; c++) {
-                    const char = levelGrid[r][c];
-                    walls[r][c] = (char === '#');
-                    if (char === '@' || char === '+') pR = r, pC = c;
-                    if (char === '$' || char === '*') boxes.push(`${r},${c}`);
-                    if (char === '.' || char === '*' || char === '+') targets.push(`${r},${c}`);
-                }
-            }
-            return true; // All maps statically verified
-        }
 
         /* Initialize Game on Load */
         window.onload = function() {
