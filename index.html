@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================================
-       CyberShift Design System - 無區分箱子與長方形大按鍵風格
+       CyberShift Design System - 開頭頁面加大字體 & 逐關解鎖風格
        ========================================================================== */
     :root {
       --bg-dark: #080a0f;
@@ -58,6 +58,142 @@
       background-size: 100% 3px, 6px 100%;
       pointer-events: none;
       z-index: 999;
+    }
+
+    /* ==========================================================================
+       🚀 開頭頁面 Overlay (大字體升級版)
+       ========================================================================== */
+    .start-screen {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at center, #182234 0%, #06080d 100%);
+      z-index: 2000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow-y: auto;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .start-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .start-card {
+      background: #0d121d;
+      border: 2px solid var(--neon-cyan);
+      border-radius: 16px;
+      padding: 40px 32px;
+      max-width: 760px;
+      width: 95%;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(0, 243, 255, 0.35);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .start-title {
+      font-family: var(--font-tech);
+      font-size: 3.8rem;
+      font-weight: 900;
+      color: var(--neon-cyan);
+      letter-spacing: 4px;
+      text-shadow: 0 0 25px rgba(0, 243, 255, 0.8), 0 0 50px rgba(0, 243, 255, 0.4);
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+
+    .start-title-sub {
+      font-size: 3rem;
+      color: #ffffff;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+    }
+
+    .start-subtitle {
+      font-size: 1.25rem;
+      color: #8da2c0;
+      letter-spacing: 3px;
+      margin-bottom: 28px;
+    }
+
+    /* 操作說明卡片 */
+    .instructions-box {
+      background: #070a10;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 22px 28px;
+      text-align: left;
+      width: 100%;
+      margin-bottom: 32px;
+    }
+
+    .instructions-title {
+      color: var(--neon-cyan);
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .instructions-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .instructions-list li {
+      font-size: 1.2rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    .badge-key {
+      color: var(--neon-cyan);
+      font-weight: bold;
+      background: rgba(0, 243, 255, 0.12);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 243, 255, 0.3);
+    }
+
+    /* 巨型遊戲開始按鈕 */
+    .btn-start-game {
+      background: linear-gradient(180deg, #00f3ff 0%, #0088aa 100%);
+      border: 2px solid #ffffff;
+      color: #000;
+      font-family: var(--font-tech);
+      font-size: 1.8rem;
+      font-weight: 900;
+      padding: 18px 48px;
+      border-radius: 10px;
+      cursor: pointer;
+      letter-spacing: 3px;
+      box-shadow: 0 0 30px var(--neon-cyan);
+      width: 100%;
+      transition: all 0.25s ease;
+      animation: pulse-start 1.8s infinite alternate;
+    }
+
+    .btn-start-game:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 45px var(--neon-cyan), inset 0 0 15px #ffffff;
+      background: #00f3ff;
+    }
+
+    .btn-start-game:active {
+      transform: scale(0.97);
+    }
+
+    @keyframes pulse-start {
+      0% { box-shadow: 0 0 18px rgba(0, 243, 255, 0.6); }
+      100% { box-shadow: 0 0 38px rgba(0, 243, 255, 1); }
     }
 
     /* 主框架 */
@@ -132,7 +268,7 @@
       align-items: center;
     }
 
-    /* 關卡選單 */
+    /* 關卡選單 (未解鎖呈 .locked 鎖定狀態) */
     .level-selector-grid {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
@@ -156,7 +292,7 @@
       transition: all 0.2s;
     }
 
-    .lvl-btn:hover {
+    .lvl-btn:hover:not(.locked) {
       border-color: var(--neon-cyan);
       color: var(--neon-cyan);
     }
@@ -178,6 +314,15 @@
       background: var(--neon-green);
       color: #000;
       box-shadow: 0 0 10px var(--neon-green);
+    }
+
+    /* 鎖定關卡樣式 */
+    .lvl-btn.locked {
+      opacity: 0.35;
+      cursor: not-allowed;
+      border-color: #222e40;
+      background: #0b0e17;
+      color: #3b485d;
     }
 
     /* HUD 看板 */
@@ -330,13 +475,19 @@
       transition: all 0.2s;
     }
 
-    .btn-cyber:hover {
+    .btn-cyber:hover:not(:disabled) {
       background: var(--neon-cyan);
       color: #000;
       box-shadow: 0 0 12px var(--neon-cyan);
     }
 
-    /* 長方形 2x2 控制面板 (放大按鍵 & 形成長方形區域 & 按下色彩反饋) */
+    .btn-cyber:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: #2c384e;
+    }
+
+    /* 長方形 2x2 控制面板 */
     .dpad-container {
       display: grid;
       grid-template-columns: repeat(2, 95px);
@@ -364,7 +515,7 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     }
 
-    /* 按下狀態：亮高飽和螢光青色 (Active Feedback) */
+    /* 按下狀態：亮高飽和螢光青色 */
     .dpad-btn:active, .dpad-btn.pressed {
       background: var(--neon-cyan);
       color: #080a0f;
@@ -419,6 +570,12 @@
     }
 
     @media (max-width: 600px) {
+      .start-title { font-size: 2.5rem; }
+      .start-title-sub { font-size: 2rem; }
+      .start-subtitle { font-size: 1rem; }
+      .instructions-box { padding: 16px; }
+      .instructions-list li { font-size: 1rem; }
+      .btn-start-game { font-size: 1.4rem; padding: 14px 28px; }
       .level-selector-grid { grid-template-columns: repeat(5, 1fr); }
       .cell { width: 28px; height: 28px; }
       .box { width: 22px; height: 22px; }
@@ -432,6 +589,26 @@
 
   <div class="crt-overlay"></div>
 
+  <!-- 🚀 開頭頁面 (Start Screen Overlay) -->
+  <div id="start-screen" class="start-screen">
+    <div class="start-card">
+      <h1 class="start-title">CyberShift<br><span class="start-title-sub">幾何矩陣</span></h1>
+      <p class="start-subtitle">CYBERPUNK SOKOBAN MATRIX PUZZLE</p>
+
+      <div class="instructions-box">
+        <h2 class="instructions-title">🎮 操作說明</h2>
+        <ul class="instructions-list">
+          <li>・點擊畫面按鈕或 <span class="badge-key">W A S D / 方向鍵</span> 移動所有箱子</li>
+          <li>・<span class="badge-key">按鍵 Z</span>：復原上一步動作</li>
+          <li>・<span class="badge-key" style="color:var(--neon-green); border-color:var(--neon-green);">規則</span>：將所有藍色金屬箱推至目標點即可通關並解鎖下一關！</li>
+        </ul>
+      </div>
+
+      <button id="btn-start-game" class="btn-start-game">遊戲開始 START GAME</button>
+    </div>
+  </div>
+
+  <!-- 遊戲主體 -->
   <div class="game-wrapper">
     <header class="game-header">
       <div>
@@ -440,7 +617,7 @@
       </div>
       <div class="header-actions">
         <button id="sound-btn" class="btn-icon">音效: ON</button>
-        <button id="reset-progress-btn" class="btn-icon" style="border-color:var(--neon-red); color:var(--neon-red);">重設紀錄</button>
+        <button id="btn-home" class="btn-icon">返回首頁</button>
       </div>
     </header>
 
@@ -478,7 +655,7 @@
           <button id="btn-next" class="btn-cyber">下一關</button>
         </div>
 
-        <!-- 長方形 2x2 控制區域 (放大按鍵，按下亮色反饋) -->
+        <!-- 長方形 2x2 控制區域 -->
         <div class="dpad-container">
           <button class="dpad-btn dpad-up" id="btn-up">▲ 上</button>
           <button class="dpad-btn dpad-down" id="btn-down">▼ 下</button>
@@ -502,7 +679,7 @@
 
   <script>
     /**
-     * CyberShift Engine (Anonymous Box Global 1-Grid Step Engine)
+     * CyberShift Engine (Start Screen & Sequential Level Unlock Engine)
      */
     document.addEventListener('DOMContentLoaded', () => {
       // 10 個經過演算法 100% 驗證、無角落死角設計的不規則關卡
@@ -660,9 +837,15 @@
       let historyStack = [];
       let stepCount = 0;
       let soundEnabled = true;
-      let clearedLevels = JSON.parse(localStorage.getItem('cybershift_anon_cleared') || '[]');
+
+      // 關卡通關陣列（每次重開啟網頁必定清空從頭開始）
+      let clearedLevels = [];
 
       // DOM 引用
+      const startScreen = document.getElementById('start-screen');
+      const btnStartGame = document.getElementById('btn-start-game');
+      const btnHome = document.getElementById('btn-home');
+
       const levelGrid = document.getElementById('level-grid');
       const gameGrid = document.getElementById('game-grid');
       const hudLevel = document.getElementById('hud-level');
@@ -674,7 +857,6 @@
       const btnPrev = document.getElementById('btn-prev');
       const btnNext = document.getElementById('btn-next');
       const soundBtn = document.getElementById('sound-btn');
-      const resetProgressBtn = document.getElementById('reset-progress-btn');
 
       const winModal = document.getElementById('win-modal');
       const modalCloseBtn = document.getElementById('modal-close-btn');
@@ -730,20 +912,42 @@
         }
       }
 
-      // 渲染關卡選單
+      // 判斷關卡是否解鎖（第 1 關預設解鎖；其餘需完成前一關）
+      function isLevelUnlocked(idx) {
+        if (idx === 0) return true;
+        return clearedLevels.includes(idx - 1);
+      }
+
+      // 渲染關卡選單 (未解鎖顯示 🔒 且無法點擊)
       function renderLevelSelector() {
         levelGrid.innerHTML = '';
         LEVELS.forEach((lvl, idx) => {
           const btn = document.createElement('button');
-          btn.className = `lvl-btn ${idx === currentLevelIndex ? 'active' : ''} ${clearedLevels.includes(idx) ? 'cleared' : ''}`;
-          btn.textContent = String(idx + 1).padStart(2, '0');
-          btn.addEventListener('click', () => loadLevel(idx));
+          const unlocked = isLevelUnlocked(idx);
+
+          let className = 'lvl-btn';
+          if (!unlocked) {
+            className += ' locked';
+          } else {
+            if (idx === currentLevelIndex) className += ' active';
+            if (clearedLevels.includes(idx)) className += ' cleared';
+          }
+
+          btn.className = className;
+          btn.textContent = unlocked ? String(idx + 1).padStart(2, '0') : '🔒';
+
+          if (unlocked) {
+            btn.addEventListener('click', () => loadLevel(idx));
+          }
+
           levelGrid.appendChild(btn);
         });
       }
 
       // 解析並載入關卡
       function loadLevel(idx) {
+        if (!isLevelUnlocked(idx)) return;
+
         currentLevelIndex = idx;
         const levelData = LEVELS[idx];
         const mapStrings = levelData.map;
@@ -779,7 +983,7 @@
 
         hudLevel.textContent = `${String(idx + 1).padStart(2, '0')} / ${LEVELS.length}`;
         btnPrev.disabled = (idx === 0);
-        btnNext.disabled = (idx === LEVELS.length - 1);
+        btnNext.disabled = (idx === LEVELS.length - 1 || !isLevelUnlocked(idx + 1));
 
         renderLevelSelector();
         renderBoard();
@@ -834,7 +1038,6 @@
       function updateHUD() {
         hudSteps.textContent = stepCount;
 
-        // 計算有多少個目標點上有箱子
         let matchedCount = 0;
         targets.forEach(t => {
           if (boxes.some(b => b.r === t.r && b.c === t.c)) {
@@ -847,6 +1050,9 @@
 
       // ⚡⚡⚡ 全域單格同步平移演算法 ⚡⚡⚡
       function moveBoxes(dr, dc) {
+        // 首頁開著時不觸發移動
+        if (!startScreen.classList.contains('hidden')) return;
+
         let sortedBoxes = [...boxes];
         if (dr === -1) sortedBoxes.sort((a, b) => a.r - b.r);        // 向上
         else if (dr === 1) sortedBoxes.sort((a, b) => b.r - a.r);   // 向下
@@ -903,10 +1109,14 @@
         if (allTargetsFilled) {
           if (!clearedLevels.includes(currentLevelIndex)) {
             clearedLevels.push(currentLevelIndex);
-            localStorage.setItem('cybershift_anon_cleared', JSON.stringify(clearedLevels));
           }
 
           renderLevelSelector();
+
+          // 啟用下一關按鈕
+          if (currentLevelIndex < LEVELS.length - 1) {
+            btnNext.disabled = false;
+          }
 
           if (clearedLevels.length === LEVELS.length) {
             playSound('clear');
@@ -920,15 +1130,39 @@
         }
       }
 
-      // 按鍵發光反饋微調
+      // 按鍵發光反饋
       function triggerButtonEffect(btn) {
         if (!btn) return;
         btn.classList.add('pressed');
         setTimeout(() => btn.classList.remove('pressed'), 120);
       }
 
-      // 鍵盤事件綁定（同步觸發畫面上按鍵的反饋效果）
+      // 🚀 開始遊戲（重頭開始第一關）
+      function startNewGame() {
+        clearedLevels = []; // 清空關卡進度
+        startScreen.classList.add('hidden');
+        loadLevel(0); // 從第一關重新開始
+      }
+
+      // 🏠 返回開頭頁面
+      function goToHomeScreen() {
+        startScreen.classList.remove('hidden');
+      }
+
+      // 綁定按鈕與首頁事件
+      btnStartGame.addEventListener('click', startNewGame);
+      btnHome.addEventListener('click', goToHomeScreen);
+
+      // 鍵盤事件綁定
       document.addEventListener('keydown', (e) => {
+        // 在首頁時按 Enter 直接開始遊戲
+        if (!startScreen.classList.contains('hidden')) {
+          if (e.key === 'Enter') {
+            startNewGame();
+          }
+          return;
+        }
+
         switch (e.key) {
           case 'ArrowUp': case 'w': case 'W':
             triggerButtonEffect(dpadUp);
@@ -962,27 +1196,19 @@
       btnUndo.addEventListener('click', undoMove);
       btnRestart.addEventListener('click', () => loadLevel(currentLevelIndex));
       btnPrev.addEventListener('click', () => { if (currentLevelIndex > 0) loadLevel(currentLevelIndex - 1); });
-      btnNext.addEventListener('click', () => { if (currentLevelIndex < LEVELS.length - 1) loadLevel(currentLevelIndex + 1); });
+      btnNext.addEventListener('click', () => { if (currentLevelIndex < LEVELS.length - 1 && isLevelUnlocked(currentLevelIndex + 1)) loadLevel(currentLevelIndex + 1); });
 
       soundBtn.addEventListener('click', () => {
         soundEnabled = !soundEnabled;
         soundBtn.textContent = `音效: ${soundEnabled ? 'ON' : 'OFF'}`;
       });
 
-      resetProgressBtn.addEventListener('click', () => {
-        if (confirm('確定要重設所有關卡紀錄嗎？')) {
-          clearedLevels = [];
-          localStorage.removeItem('cybershift_anon_cleared');
-          loadLevel(0);
-        }
-      });
-
       modalCloseBtn.addEventListener('click', () => {
         winModal.classList.remove('active');
       });
 
-      // 初始化遊戲
-      loadLevel(0);
+      // 初始化：每次開啟或重新載入網頁，必定從開頭頁面開始
+      goToHomeScreen();
     });
   </script>
 </body>
