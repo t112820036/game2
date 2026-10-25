@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberShape: 幾何異位 - 形狀推箱遊戲</title>
+  <!-- Google Fonts: Orbitron & Rajdhani -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       CyberShape Visual Theme (賽博科技幾何風格)
+       ========================================================================== */
+    :root {
+      --bg-dark: #080a0f;
+      --panel-bg: #111622;
+      --border-color: #2a364f;
+      --neon-cyan: #00f3ff;
+      --neon-green: #00ff66;
+      --neon-gold: #ffcc00;
+      --neon-purple: #cc00ff;
+      --neon-red: #ff0055;
+      --font-tech: 'Orbitron', sans-serif;
+      --font-num: 'Rajdhani', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background: radial-gradient(circle at center, #1a2233 0%, var(--bg-dark) 100%);
+      color: #e2e8f0;
+      font-family: var(--font-tech);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* CRT 復古掃描線效果 */
+    .crt-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+      ), linear-gradient(
+        90deg,
+        rgba(255, 0, 0, 0.02),
+        rgba(0, 255, 0, 0.01),
+        rgba(0, 0, 255, 0.02)
+      );
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* 遊戲主容器 */
+    .game-wrapper {
+      width: 95%;
+      max-width: 850px;
+      background: var(--panel-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 
+        0 0 30px rgba(0, 243, 255, 0.2),
+        inset 0 0 15px rgba(0, 0, 0, 0.9);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 頂部標題與控制欄 */
+    .game-header {
+      background: #171d2c;
+      padding: 15px 25px;
+      border-bottom: 2px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .game-title {
+      font-family: var(--font-tech);
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--neon-cyan);
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
+    }
+
+    .game-subtitle {
+      font-size: 0.75rem;
+      color: #6a7b95;
+      letter-spacing: 1px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-icon {
+      background: transparent;
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      padding: 6px 12px;
+      font-family: var(--font-tech);
+      font-size: 0.8rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-icon:hover {
+      background: rgba(0, 243, 255, 0.2);
+      box-shadow: 0 0 8px rgba(0, 243, 255, 0.4);
+    }
+
+    /* 主體區塊 */
+    .game-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 關卡選擇列表 */
+    .level-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 6px;
+      width: 100%;
+      max-width: 650px;
+      margin-bottom: 15px;
+    }
+
+    .lvl-btn {
+      padding: 6px 0;
+      background: #141a26;
+      border: 1px solid var(--border-color);
+      color: #586980;
+      font-family: var(--font-num);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .lvl-btn:hover {
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+    }
+
+    .lvl-btn.active {
+      border-color: var(--neon-cyan);
+      color: #000;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 10px var(--neon-cyan);
+    }
+
+    .lvl-btn.cleared {
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+      background: rgba(0, 255, 102, 0.12);
+    }
+
+    .lvl-btn.cleared.active {
+      background: var(--neon-green);
+      color: #000;
+      box-shadow: 0 0 10px var(--neon-green);
+    }
+
+    /* HUD 資訊看板 */
+    .hud-info {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 520px;
+      background: #0d111a;
+      border: 1px solid var(--border-color);
+      padding: 10px 20px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+
+    .hud-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hud-label {
+      font-size: 0.7rem;
+      color: #6a7b95;
+    }
+
+    .hud-val {
+      font-family: var(--font-num);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    /* 核心地圖畫布區 (Grid-based Board) */
+    .board-container {
+      background: #090c12;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 15px;
+      min-height: 320px;
+    }
+
+    .game-grid {
+      display: grid;
+      gap: 4px;
+    }
+
+    .cell {
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.4rem;
+      position: relative;
+      transition: all 0.15s ease;
+    }
+
+    /* 牆體 */
+    .cell.wall {
+      background: linear-gradient(135deg, #283244 0%, #151c28 100%);
+      border: 1px solid #3c4b66;
+      box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1);
+    }
+
+    /* 地板 */
+    .cell.floor {
+      background: rgba(20, 26, 38, 0.6);
+      border: 1px solid rgba(42, 54, 79, 0.4);
+    }
+
+    /* 目標位置 (Targets) */
+    .target-icon {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 4px;
+      opacity: 0.85;
+      animation: pulse-glow 2s infinite alternate;
+    }
+
+    .target-icon.target-1 { border: 2px dashed var(--neon-green); color: var(--neon-green); }
+    .target-icon.target-2 { border: 2px dashed var(--neon-cyan); color: var(--neon-cyan); }
+    .target-icon.target-3 { border: 2px dashed var(--neon-gold); color: var(--neon-gold); }
+    .target-icon.target-4 { border: 2px dashed var(--neon-purple); color: var(--neon-purple); }
+
+    @keyframes pulse-glow {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      100% { transform: scale(1.05); opacity: 1; }
+    }
+
+    /* 箱子 (Boxes) */
+    .box {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      z-index: 10;
+      transition: all 0.15s ease;
+    }
+
+    .box.box-1 { background: radial-gradient(circle, #00ff66, #008833); border: 2px solid #ffffff; color: #000; box-shadow: 0 0 12px var(--neon-green); }
+    .box.box-2 { background: radial-gradient(circle, #00f3ff, #0088aa); border: 2px solid #ffffff; color: #000; box-shadow: 0 0 12px var(--neon-cyan); }
+    .box.box-3 { background: radial-gradient(circle, #ffcc00, #aa8800); border: 2px solid #ffffff; color: #000; box-shadow: 0 0 12px var(--neon-gold); }
+    .box.box-4 { background: radial-gradient(circle, #cc00ff, #7700aa); border: 2px solid #ffffff; color: #fff; box-shadow: 0 0 12px var(--neon-purple); }
+
+    /* 正確配對狀態 */
+    .box.matched {
+      animation: box-matched-bounce 0.3s ease-out;
+      border-color: #ffffff;
+      filter: brightness(1.2);
+    }
+
+    @keyframes box-matched-bounce {
+      0% { transform: scale(0.8); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    /* 玩家 (Player Avatar) */
+    .player {
+      width: 36px;
+      height: 36px;
+      background: radial-gradient(circle, #ffffff, #88aaff);
+      border: 2px solid var(--neon-cyan);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.2rem;
+      box-shadow: 0 0 15px var(--neon-cyan);
+      z-index: 20;
+    }
+
+    /* 控制面板區 */
+    .control-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .btn-cyber {
+      background: linear-gradient(180deg, #1e2838 0%, #101622 100%);
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      font-family: var(--font-tech);
+      font-size: 0.85rem;
+      padding: 8px 18px;
+      cursor: pointer;
+      border-radius: 4px;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+    }
+
+    .btn-cyber:hover {
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: 0 0 12px var(--neon-cyan);
+    }
+
+    /* 手機十字 D-Pad 方向鍵 */
+    .dpad-container {
+      display: grid;
+      grid-template-columns: repeat(3, 48px);
+      grid-template-rows: repeat(3, 48px);
+      gap: 6px;
+      margin-top: 5px;
+    }
+
+    .dpad-btn {
+      background: #161e2e;
+      border: 1px solid var(--border-color);
+      color: var(--neon-cyan);
+      font-size: 1.2rem;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .dpad-btn:active {
+      background: var(--neon-cyan);
+      color: #000;
+    }
+
+    .dpad-up { grid-column: 2; grid-row: 1; }
+    .dpad-left { grid-column: 1; grid-row: 2; }
+    .dpad-right { grid-column: 3; grid-row: 2; }
+    .dpad-down { grid-column: 2; grid-row: 3; }
+
+    /* 通關 Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(5, 7, 10, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-panel {
+      background: linear-gradient(135deg, #1a2233 0%, #0d111a 100%);
+      border: 2px solid var(--neon-green);
+      padding: 35px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 450px;
+      width: 90%;
+      box-shadow: 0 0 30px rgba(0, 255, 102, 0.3);
+    }
+
+    .modal-title {
+      font-family: var(--font-tech);
+      font-size: 1.8rem;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--neon-green);
+      margin-bottom: 10px;
+    }
+
+    .modal-desc {
+      color: #a0aec0;
+      font-size: 0.95rem;
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      .level-selector-grid { grid-template-columns: repeat(5, 1fr); }
+      .cell { width: 36px; height: 36px; font-size: 1.1rem; }
+      .box, .player { width: 30px; height: 30px; font-size: 0.9rem; }
+      .target-icon { width: 22px; height: 22px; }
+      .game-title { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="crt-overlay"></div>
+
+  <div class="game-wrapper">
+    <!-- 頂部資訊欄 -->
+    <header class="game-header">
+      <div>
+        <h1 class="game-title">CyberShape // 幾何異位</h1>
+        <p class="game-subtitle">SHAPE MATRIX SOKOBAN PUZZLE</p>
+      </div>
+      <div class="header-actions">
+        <button id="sound-btn" class="btn-icon">音效: ON</button>
+        <button id="reset-progress-btn" class="btn-icon" style="border-color:var(--neon-red); color:var(--neon-red);">重設紀錄</button>
+      </div>
+    </header>
+
+    <!-- 遊戲主體區域 -->
+    <main class="game-body">
+      <!-- 關卡選擇列 -->
+      <div id="level-grid" class="level-selector-grid"></div>
+
+      <!-- HUD 數據 -->
+      <div class="hud-info">
+        <div class="hud-item">
+          <span class="hud-label">當前關卡</span>
+          <span id="hud-level" class="hud-val">01 / 10</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">移動步數</span>
+          <span id="hud-steps" class="hud-val">0</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">完成配對</span>
+          <span id="hud-matched" class="hud-val">0 / 1</span>
+        </div>
+      </div>
+
+      <!-- 地圖區域 -->
+      <div class="board-container">
+        <div id="game-grid" class="game-grid"></div>
+      </div>
+
+      <!-- 操作面板 -->
+      <div class="control-panel">
+        <div class="action-buttons">
+          <button id="btn-undo" class="btn-cyber">復原 (Undo)</button>
+          <button id="btn-restart" class="btn-cyber">重置本關</button>
+          <button id="btn-prev" class="btn-cyber">上一關</button>
+          <button id="btn-next" class="btn-cyber">下一關</button>
+        </div>
+
+        <!-- 手機方向鍵 D-Pad -->
+        <div class="dpad-container">
+          <button class="dpad-btn dpad-up" id="btn-up">▲</button>
+          <button class="dpad-btn dpad-left" id="btn-left">◀</button>
+          <button class="dpad-btn dpad-right" id="btn-right">▶</button>
+          <button class="dpad-btn dpad-down" id="btn-down">▼</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 全通關 Modal -->
+  <div id="win-modal" class="modal-overlay">
+    <div class="modal-panel">
+      <h2 class="modal-title">ALL MATRIX CLEARED</h2>
+      <p class="modal-desc">
+        恭喜！您已成功完成全部幾何形狀推箱重構任務！
+      </p>
+      <button id="modal-close-btn" class="btn-cyber" style="border-color:var(--neon-green); color:var(--neon-green);">返回地圖</button>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * CyberShape Game Logic Engine
+     */
+    document.addEventListener('DOMContentLoaded', () => {
+      // 形狀定義：
+      // 1: 正方形 (Square - 🟩), 2: 圓形 (Circle - 🔵), 3: 三角形 (Triangle - 🔺), 4: 菱形 (Diamond - 🔷)
+      const SHAPES = {
+        1: { name: 'Square', symbol: '■', class: 'box-1', targetClass: 'target-1' },
+        2: { name: 'Circle', symbol: '●', class: 'box-2', targetClass: 'target-2' },
+        3: { name: 'Triangle', symbol: '▲', class: 'box-3', targetClass: 'target-3' },
+        4: { name: 'Diamond', symbol: '◆', class: 'box-4', targetClass: 'target-4' }
+      };
+
+      // 10 個幾何推箱關卡設計
+      // 符號：'#' 牆, ' ' 地板, '@' 玩家, '1'~'4' 目標點, 'A'~'D' 形狀箱子 (A=1, B=2, C=3, D=4)
+      const LEVELS = [
+        {
+          name: "關卡 01: 正方形對位",
+          map: [
+            "######",
+            "# @A1#",
+            "######"
+          ]
+        },
+        {
+          name: "關卡 02: 雙重形狀",
+          map: [
+            "#######",
+            "#@ A B#",
+            "#  1 2#",
+            "#######"
+          ]
+        },
+        {
+          name: "關卡 03: 轉角死角",
+          map: [
+            "######",
+            "#  1 #",
+            "# #A #",
+            "# @  #",
+            "######"
+          ]
+        },
+        {
+          name: "關卡 04: 狹道歸位",
+          map: [
+            "########",
+            "## 1 2 #",
+            "#  A B #",
+            "#  @   #",
+            "########"
+          ]
+        },
+        {
+          name: "關卡 05: 三重幾何",
+          map: [
+            "#########",
+            "# @ A B #",
+            "# #1 2  #",
+            "#   C 3 #",
+            "#########"
+          ]
+        },
+        {
+          name: "關卡 06: 對調交叉",
+          map: [
+            "########",
+            "# 2  1 #",
+            "# A  B #",
+            "#  @   #",
+            "########"
+          ]
+        },
+        {
+          name: "關卡 07: 隔離牆壁",
+          map: [
+            "#########",
+            "# 1 # 2 #",
+            "# A # B #",
+            "#   @   #",
+            "# C # 3 #",
+            "#########"
+          ]
+        },
+        {
+          name: "關卡 08: 4色四象",
+          map: [
+            "##########",
+            "# 1 2 3 4#",
+            "# A B C D#",
+            "#   @    #",
+            "##########"
+          ]
+        },
+        {
+          name: "關卡 09: 迷宮通道",
+          map: [
+            "#########",
+            "# 1 # A #",
+            "# 2 @ B #",
+            "# 3 # C #",
+            "#########"
+          ]
+        },
+        {
+          name: "關卡 10: 幾何矩陣大師",
+          map: [
+            "###########",
+            "# 1 # 2 # #",
+            "# A   B   #",
+            "### # # ###",
+            "# C   D   #",
+            "# 3 # 4 @ #",
+            "###########"
+          ]
+        }
+      ];
+
+      // 遊戲狀態變數
+      let currentLevelIndex = 0;
+      let gridWidth = 0;
+      let gridHeight = 0;
+      let playerPos = { r: 0, c: 0 };
+      let walls = [];     // 2D boolean array
+      let targets = [];   // [{ r, c, shapeId }]
+      let boxes = [];     // [{ r, c, shapeId }]
+      let historyStack = [];
+      let stepCount = 0;
+      let soundEnabled = true;
+      let clearedLevels = JSON.parse(localStorage.getItem('cybershape_cleared') || '[]');
+
+      // DOM 引用
+      const levelGrid = document.getElementById('level-grid');
+      const gameGrid = document.getElementById('game-grid');
+      const hudLevel = document.getElementById('hud-level');
+      const hudSteps = document.getElementById('hud-steps');
+      const hudMatched = document.getElementById('hud-matched');
+
+      const btnUndo = document.getElementById('btn-undo');
+      const btnRestart = document.getElementById('btn-restart');
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+      const soundBtn = document.getElementById('sound-btn');
+      const resetProgressBtn = document.getElementById('reset-progress-btn');
+
+      const winModal = document.getElementById('win-modal');
+      const modalCloseBtn = document.getElementById('modal-close-btn');
+
+      // Web Audio API 音效引擎
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      function playSound(type) {
+        if (!soundEnabled) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'move') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(400, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+          osc.start(now);
+          osc.stop(now + 0.04);
+        } else if (type === 'push') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(110, now + 0.08);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'match') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.06);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        } else if (type === 'clear') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(0.15, now + i * 0.08);
+            g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.25);
+            o.start(now + i * 0.08);
+            o.stop(now + i * 0.08 + 0.25);
+          });
+        }
+      }
+
+      // 渲染頂部關卡切換鈕
+      function renderLevelSelector() {
+        levelGrid.innerHTML = '';
+        LEVELS.forEach((lvl, idx) => {
+          const btn = document.createElement('button');
+          btn.className = `lvl-btn ${idx === currentLevelIndex ? 'active' : ''} ${clearedLevels.includes(idx) ? 'cleared' : ''}`;
+          btn.textContent = String(idx + 1).padStart(2, '0');
+          btn.addEventListener('click', () => loadLevel(idx));
+          levelGrid.appendChild(btn);
+        });
+      }
+
+      // 解析並載入關卡地圖
+      function loadLevel(idx) {
+        currentLevelIndex = idx;
+        const levelData = LEVELS[idx];
+        const mapStrings = levelData.map;
+
+        gridHeight = mapStrings.length;
+        gridWidth = Math.max(...mapStrings.map(s => s.length));
+
+        walls = Array.from({ length: gridHeight }, () => new Array(gridWidth).fill(false));
+        targets = [];
+        boxes = [];
+        historyStack = [];
+        stepCount = 0;
+
+        for (let r = 0; r < gridHeight; r++) {
+          const rowStr = mapStrings[r];
+          for (let c = 0; c < rowStr.length; c++) {
+            const ch = rowStr[c];
+            if (ch === '#') {
+              walls[r][c] = true;
+            } else if (ch === '@') {
+              playerPos = { r, c };
+            } else if (['1', '2', '3', '4'].includes(ch)) {
+              targets.push({ r, c, shapeId: parseInt(ch, 10) });
+            } else if (['A', 'B', 'C', 'D'].includes(ch)) {
+              const charMap = { 'A': 1, 'B': 2, 'C': 3, 'D': 4 };
+              boxes.push({ r, c, shapeId: charMap[ch] });
+            }
+          }
+        }
+
+        hudLevel.textContent = `${String(idx + 1).padStart(2, '0')} / ${LEVELS.length}`;
+        btnPrev.disabled = (idx === 0);
+        btnNext.disabled = (idx === LEVELS.length - 1);
+
+        renderLevelSelector();
+        renderBoard();
+        updateHUD();
+      }
+
+      // 渲染地圖 Grid
+      function renderBoard() {
+        gameGrid.style.gridTemplateColumns = `repeat(${gridWidth}, 1fr)`;
+        gameGrid.innerHTML = '';
+
+        for (let r = 0; r < gridHeight; r++) {
+          for (let c = 0; c < gridWidth; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+
+            if (walls[r][c]) {
+              cell.classList.add('wall');
+            } else {
+              cell.classList.add('floor');
+
+              // 繪製目標點 Target
+              const target = targets.find(t => t.r === r && t.c === c);
+              if (target) {
+                const targetIcon = document.createElement('div');
+                targetIcon.className = `target-icon ${SHAPES[target.shapeId].targetClass}`;
+                targetIcon.textContent = SHAPES[target.shapeId].symbol;
+                cell.appendChild(targetIcon);
+              }
+
+              // 繪製箱子 Box
+              const box = boxes.find(b => b.r === r && b.c === c);
+              if (box) {
+                const boxEl = document.createElement('div');
+                boxEl.className = `box ${SHAPES[box.shapeId].class}`;
+                boxEl.textContent = SHAPES[box.shapeId].symbol;
+
+                // 是否正好匹配對應形狀目標點
+                if (target && target.shapeId === box.shapeId) {
+                  boxEl.classList.add('matched');
+                }
+                cell.appendChild(boxEl);
+              }
+
+              // 繪製玩家 Player
+              if (playerPos.r === r && playerPos.c === c) {
+                const playerEl = document.createElement('div');
+                playerEl.className = 'player';
+                playerEl.textContent = '⚛';
+                cell.appendChild(playerEl);
+              }
+            }
+
+            gameGrid.appendChild(cell);
+          }
+        }
+      }
+
+      // 更新 HUD
+      function updateHUD() {
+        hudSteps.textContent = stepCount;
+
+        // 計算正確配對數
+        let matchedCount = 0;
+        boxes.forEach(b => {
+          const t = targets.find(target => target.r === b.r && target.c === b.c);
+          if (t && t.shapeId === b.shapeId) {
+            matchedCount++;
+          }
+        });
+
+        hudMatched.textContent = `${matchedCount} / ${boxes.length}`;
+      }
+
+      // 移動邏輯 (Up, Down, Left, Right)
+      function movePlayer(dr, dc) {
+        const nr = playerPos.r + dr;
+        const nc = playerPos.c + dc;
+
+        // 牆壁阻擋
+        if (nr < 0 || nr >= gridHeight || nc < 0 || nc >= gridWidth || walls[nr][nc]) {
+          return;
+        }
+
+        const boxIndex = boxes.findIndex(b => b.r === nr && b.c === nc);
+
+        if (boxIndex !== -1) {
+          // 前方有箱子 -> 檢查箱子後方
+          const bnr = nr + dr;
+          const bnc = nc + dc;
+
+          if (bnr < 0 || bnr >= gridHeight || bnc < 0 || bnc >= gridWidth || walls[bnr][bnc]) {
+            return; // 箱子後方是牆壁
+          }
+
+          if (boxes.some(b => b.r === bnr && b.c === bnc)) {
+            return; // 箱子後方有其他箱子
+          }
+
+          // 備份歷史紀錄以供 Undo
+          saveHistory();
+
+          // 推箱子
+          boxes[boxIndex].r = bnr;
+          boxes[boxIndex].c = bnc;
+          playerPos = { r: nr, c: nc };
+          stepCount++;
+
+          // 判斷推完是否落入正確形狀目標點
+          const box = boxes[boxIndex];
+          const matchedTarget = targets.find(t => t.r === bnr && t.c === bnc && t.shapeId === box.shapeId);
+          if (matchedTarget) {
+            playSound('match');
+          } else {
+            playSound('push');
+          }
+
+        } else {
+          // 空地移動
+          saveHistory();
+          playerPos = { r: nr, c: nc };
+          stepCount++;
+          playSound('move');
+        }
+
+        renderBoard();
+        updateHUD();
+        checkVictory();
+      }
+
+      // 備份歷史紀錄
+      function saveHistory() {
+        historyStack.push({
+          playerPos: { ...playerPos },
+          boxes: boxes.map(b => ({ ...b })),
+          stepCount: stepCount
+        });
+      }
+
+      // 復原一步 (Undo)
+      function undoMove() {
+        if (historyStack.length === 0) return;
+        const lastState = historyStack.pop();
+        playerPos = lastState.playerPos;
+        boxes = lastState.boxes;
+        stepCount = lastState.stepCount;
+        playSound('move');
+        renderBoard();
+        updateHUD();
+      }
+
+      // 檢查通關條件
+      function checkVictory() {
+        const allMatched = boxes.every(b => {
+          const t = targets.find(target => target.r === b.r && target.c === b.c);
+          return t && t.shapeId === b.shapeId;
+        });
+
+        if (allMatched) {
+          if (!clearedLevels.includes(currentLevelIndex)) {
+            clearedLevels.push(currentLevelIndex);
+            localStorage.setItem('cybershape_cleared', JSON.stringify(clearedLevels));
+          }
+
+          renderLevelSelector();
+
+          if (clearedLevels.length === LEVELS.length) {
+            playSound('clear');
+            setTimeout(() => winModal.classList.add('active'), 300);
+          } else {
+            playSound('clear');
+            if (currentLevelIndex < LEVELS.length - 1) {
+              setTimeout(() => loadLevel(currentLevelIndex + 1), 500);
+            }
+          }
+        }
+      }
+
+      // 鍵盤操控綁定
+      document.addEventListener('keydown', (e) => {
+        switch (e.key) {
+          case 'ArrowUp': case 'w': case 'W': movePlayer(-1, 0); break;
+          case 'ArrowDown': case 's': case 'S': movePlayer(1, 0); break;
+          case 'ArrowLeft': case 'a': case 'A': movePlayer(0, -1); break;
+          case 'ArrowRight': case 'd': case 'D': movePlayer(0, 1); break;
+          case 'z': case 'Z': undoMove(); break;
+        }
+      });
+
+      // 手機方向鍵 D-Pad 綁定
+      document.getElementById('btn-up').addEventListener('click', () => movePlayer(-1, 0));
+      document.getElementById('btn-down').addEventListener('click', () => movePlayer(1, 0));
+      document.getElementById('btn-left').addEventListener('click', () => movePlayer(0, -1));
+      document.getElementById('btn-right').addEventListener('click', () => movePlayer(0, 1));
+
+      // 按鈕事件
+      btnUndo.addEventListener('click', undoMove);
+      btnRestart.addEventListener('click', () => loadLevel(currentLevelIndex));
+      btnPrev.addEventListener('click', () => { if (currentLevelIndex > 0) loadLevel(currentLevelIndex - 1); });
+      btnNext.addEventListener('click', () => { if (currentLevelIndex < LEVELS.length - 1) loadLevel(currentLevelIndex + 1); });
+
+      soundBtn.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        soundBtn.textContent = `音效: ${soundEnabled ? 'ON' : 'OFF'}`;
+      });
+
+      resetProgressBtn.addEventListener('click', () => {
+        if (confirm('確定要重設所有關卡紀錄嗎？')) {
+          clearedLevels = [];
+          localStorage.removeItem('cybershape_cleared');
+          loadLevel(0);
+        }
+      });
+
+      modalCloseBtn.addEventListener('click', () => {
+        winModal.classList.remove('active');
+      });
+
+      // 初始化遊戲
+      loadLevel(0);
+    });
+  </script>
+</body>
+</html
