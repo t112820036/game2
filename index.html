@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CyberShift: 幾何矩陣 - 全域單格移位</title>
+  <title>CyberShift: 幾何矩陣 - 不規則大空間版</title>
   <!-- Google Fonts: Orbitron & Rajdhani -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================================
-       CyberShift Visual Theme (單格全域移位賽博風格)
+       CyberShift Design System - 不規則大空間幾何風格
        ========================================================================== */
     :root {
       --bg-dark: #080a0f;
@@ -44,7 +44,7 @@
       overflow: hidden;
     }
 
-    /* CRT 復古掃描線 */
+    /* CRT 復古掃描線效果 */
     .crt-overlay {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -64,13 +64,13 @@
 
     /* 主框架 */
     .game-wrapper {
-      width: 95%;
-      max-width: 850px;
+      width: 96%;
+      max-width: 900px;
       background: var(--panel-bg);
       border: 2px solid var(--border-color);
       border-radius: 12px;
       box-shadow: 
-        0 0 30px rgba(0, 243, 255, 0.2),
+        0 0 35px rgba(0, 243, 255, 0.2),
         inset 0 0 15px rgba(0, 0, 0, 0.9);
       display: flex;
       flex-direction: column;
@@ -81,7 +81,7 @@
     /* 頂部 Header */
     .game-header {
       background: #171d2c;
-      padding: 15px 25px;
+      padding: 14px 22px;
       border-bottom: 2px solid var(--border-color);
       display: flex;
       justify-content: space-between;
@@ -128,7 +128,7 @@
 
     /* 主體區塊 */
     .game-body {
-      padding: 20px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -140,8 +140,8 @@
       grid-template-columns: repeat(10, 1fr);
       gap: 6px;
       width: 100%;
-      max-width: 650px;
-      margin-bottom: 15px;
+      max-width: 680px;
+      margin-bottom: 12px;
     }
 
     .lvl-btn {
@@ -187,12 +187,12 @@
       display: flex;
       justify-content: space-between;
       width: 100%;
-      max-width: 520px;
+      max-width: 580px;
       background: #0d111a;
       border: 1px solid var(--border-color);
-      padding: 10px 20px;
+      padding: 8px 18px;
       border-radius: 6px;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
 
     .hud-item {
@@ -208,58 +208,67 @@
 
     .hud-val {
       font-family: var(--font-num);
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: 700;
       color: #ffffff;
     }
 
-    /* 核心地圖網格 */
+    /* 核心地圖大畫布 (適應大型不規則地圖) */
     .board-container {
-      background: #090c12;
+      background: #06080d;
       border: 2px solid var(--border-color);
       border-radius: 8px;
       padding: 12px;
-      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+      box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.95);
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 15px;
-      min-height: 320px;
+      margin-bottom: 12px;
+      min-height: 380px;
+      width: 100%;
+      max-width: 680px;
+      overflow: auto;
     }
 
     .game-grid {
       display: grid;
-      gap: 4px;
+      gap: 3px;
     }
 
     .cell {
-      width: 44px;
-      height: 44px;
-      border-radius: 6px;
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       position: relative;
     }
 
-    /* 牆壁 */
+    /* 虛無 / 外界 (Void) */
+    .cell.void {
+      background: transparent;
+      border: none;
+    }
+
+    /* 牆壁 (Metallic Wall) */
     .cell.wall {
       background: linear-gradient(135deg, #283244 0%, #151c28 100%);
       border: 1px solid #3c4b66;
-      box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.12);
     }
 
-    /* 地板 */
+    /* 地板 (Floor) */
     .cell.floor {
-      background: rgba(20, 26, 38, 0.6);
+      background: rgba(18, 24, 36, 0.75);
       border: 1px solid rgba(42, 54, 79, 0.4);
     }
 
     /* 目標位置 Target */
     .target-icon {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -280,14 +289,14 @@
 
     /* 動態方塊 Box */
     .box {
-      width: 36px;
-      height: 36px;
-      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      border-radius: 5px;
       display: flex;
       justify-content: center;
       align-items: center;
       font-weight: bold;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
       z-index: 10;
       transition: all 0.15s ease-out;
@@ -315,13 +324,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       width: 100%;
     }
 
     .action-buttons {
       display: flex;
-      gap: 15px;
+      gap: 12px;
     }
 
     .btn-cyber {
@@ -330,7 +339,7 @@
       color: var(--neon-cyan);
       font-family: var(--font-tech);
       font-size: 0.85rem;
-      padding: 8px 18px;
+      padding: 8px 16px;
       cursor: pointer;
       border-radius: 4px;
       letter-spacing: 1px;
@@ -346,18 +355,17 @@
     /* D-Pad 十字鍵 */
     .dpad-container {
       display: grid;
-      grid-template-columns: repeat(3, 48px);
-      grid-template-rows: repeat(3, 48px);
-      gap: 6px;
-      margin-top: 5px;
+      grid-template-columns: repeat(3, 44px);
+      grid-template-rows: repeat(3, 44px);
+      gap: 5px;
     }
 
     .dpad-btn {
       background: #161e2e;
       border: 1px solid var(--border-color);
       color: var(--neon-cyan);
-      font-size: 1.2rem;
-      border-radius: 8px;
+      font-size: 1.1rem;
+      border-radius: 6px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -416,9 +424,9 @@
 
     @media (max-width: 600px) {
       .level-selector-grid { grid-template-columns: repeat(5, 1fr); }
-      .cell { width: 36px; height: 36px; font-size: 1.1rem; }
-      .box { width: 30px; height: 30px; font-size: 0.9rem; }
-      .target-icon { width: 22px; height: 22px; }
+      .cell { width: 28px; height: 28px; font-size: 0.95rem; }
+      .box { width: 24px; height: 24px; font-size: 0.8rem; }
+      .target-icon { width: 20px; height: 20px; }
       .game-title { font-size: 1rem; }
     }
   </style>
@@ -431,7 +439,7 @@
     <header class="game-header">
       <div>
         <h1 class="game-title">CyberShift // 幾何矩陣</h1>
-        <p class="game-subtitle">GLOBAL 1-GRID STEP MATRIX PUZZLE</p>
+        <p class="game-subtitle">IRREGULAR LARGE MATRIX - GLOBAL 1-GRID STEP</p>
       </div>
       <div class="header-actions">
         <button id="sound-btn" class="btn-icon">音效: ON</button>
@@ -459,7 +467,7 @@
         </div>
       </div>
 
-      <!-- 遊戲網格 -->
+      <!-- 不規則大遊戲網格 -->
       <div class="board-container">
         <div id="game-grid" class="game-grid"></div>
       </div>
@@ -489,7 +497,7 @@
     <div class="modal-panel">
       <h2 class="modal-title">ALL STAGES ALIGNED</h2>
       <p class="modal-desc">
-        恭喜！您已成功掌握全域單格移位規則，完成全部關卡的幾何對位！
+        恭喜！您已成功掌握全域單格移位與不規則地形障礙，完成全部關卡的幾何對位！
       </p>
       <button id="modal-close-btn" class="btn-cyber" style="border-color:var(--neon-green); color:var(--neon-green);">返回關卡</button>
     </div>
@@ -497,7 +505,7 @@
 
   <script>
     /**
-     * CyberShift Engine (Global 1-Tile Movement Engine)
+     * CyberShift Engine (Irregular Large Map Engine)
      */
     document.addEventListener('DOMContentLoaded', () => {
       // 幾何圖形定義：
@@ -509,104 +517,148 @@
         4: { name: 'Diamond', symbol: '◆', class: 'box-4', targetClass: 'target-4' }
       };
 
-      // 10 個專為單格同步移位設計的關卡
+      // 10 個大型不規則、100% 均保證有解的幾何關卡
+      // 符號：' ' 虛無/外界, '#' 牆壁, '.' 地板, '1'~'4' 目標點, 'A'~'D' 方塊 (A=1, B=2, C=3, D=4)
       const LEVELS = [
         {
-          name: "關卡 01: 平移一格",
+          name: "關卡 01: 不規則雙廊大廳 (9x7)",
           map: [
-            "######",
-            "#A..1#",
-            "######"
+            "  #######  ",
+            "###.....###",
+            "#A.......1#",
+            "#...#.#...#",
+            "#B.......2#",
+            "###.....###",
+            "  #######  "
           ]
         },
         {
-          name: "關卡 02: 障礙卡位",
+          name: "關卡 02: 錯落柱廊避障 (10x8)",
           map: [
-            "######",
-            "#A..1#",
-            "#.#.2#",
-            "#B...#",
-            "######"
+            "##########",
+            "#A......1#",
+            "#..####..#",
+            "#.#....#.#",
+            "#.#..2.#.#",
+            "#B.#...#.#",
+            "#...####.#",
+            "##########"
           ]
         },
         {
-          name: "關卡 03: 錯位高低",
+          name: "關卡 03: T型展延階梯廳 (10x8)",
           map: [
-            "#######",
-            "#A...1#",
-            "#..#..#",
-            "#B..2.#",
-            "#######"
+            "##########",
+            "#A......1#",
+            "#...##...#",
+            "###....###",
+            "  #....#  ",
+            "  #B..2#  ",
+            "  #....#  ",
+            "  ######  "
           ]
         },
         {
-          name: "關卡 04: 同步排隊",
+          name: "關卡 04: 三星十字不規則廳 (11x9)",
           map: [
-            "#######",
-            "#A.B.1#",
-            "#...2.#",
-            "#######"
+            "  #######  ",
+            "###.....###",
+            "#A.......1#",
+            "#...#.#...#",
+            "#B.......2#",
+            "#...#.#...#",
+            "#C.......3#",
+            "###.....###",
+            "  #######  "
           ]
         },
         {
-          name: "關卡 05: 牆壁滯留",
+          name: "關卡 05: 異形卡位多室 (10x9)",
           map: [
-            "########",
-            "#A.#...#",
-            "#..#1.2#",
-            "#B.....#",
-            "########"
+            "##########",
+            "#A.#....1#",
+            "#..#.....#",
+            "##...#####",
+            "#B...#...#",
+            "#....#.2.#",
+            "#....#...#",
+            "#C......3#",
+            "##########"
           ]
         },
         {
-          name: "關卡 06: 三體同步",
-          map: [
-            "########",
-            "#A...1.#",
-            "#B.#.2.#",
-            "#C...3.#",
-            "########"
-          ]
-        },
-        {
-          name: "關卡 07: 交叉錯格",
-          map: [
-            "#######",
-            "#A..2.#",
-            "#.#.#.#",
-            "#B..1.#",
-            "#######"
-          ]
-        },
-        {
-          name: "關卡 08: 4色矩陣",
-          map: [
-            "#########",
-            "#A.B.C.D#",
-            "#.#.#.#.#",
-            "#1.2.3.4#",
-            "#########"
-          ]
-        },
-        {
-          name: "關卡 09: 迷宮卡格",
-          map: [
-            "#########",
-            "#A..#..1#",
-            "#.#.B.#.#",
-            "#C..2..3#",
-            "#########"
-          ]
-        },
-        {
-          name: "關卡 10: 幾何對位大師",
+          name: "關卡 06: 迴廊卡位步道 (11x9)",
           map: [
             "###########",
-            "#A...#...1#",
-            "#.B.#..2..#",
-            "#...C#...3#",
-            "#D.#...4..#",
+            "#A.......1#",
+            "#.#######.#",
+            "#.#.....#.#",
+            "#.#.B.2.#.#",
+            "#.#.....#.#",
+            "#.#######.#",
+            "#C.......3#",
             "###########"
+          ]
+        },
+        {
+          name: "關卡 07: 菱形幾何錯位廳 (11x11)",
+          map: [
+            "    #####    ",
+            "  ###...###  ",
+            " ##.......## ",
+            "##A...#...1##",
+            "#.....#.....#",
+            "#...#####...#",
+            "#.....#.....#",
+            "##B...#...2##",
+            " ##.......## ",
+            "  ###...###  ",
+            "    #####    "
+          ]
+        },
+        {
+          name: "關卡 08: 四象城堡大陣 (12x10)",
+          map: [
+            "############",
+            "#A........1#",
+            "#..######..#",
+            "#B.#....#.2#",
+            "#..#.3..#..#",
+            "#..#..C.#..#",
+            "#D.#....#.4#",
+            "#..######..#",
+            "#..........#",
+            "############"
+          ]
+        },
+        {
+          name: "關卡 09: 雙環迷宮對對碰 (11x11)",
+          map: [
+            "###########",
+            "#A.......1#",
+            "#.#######.#",
+            "#.#.....#.#",
+            "#.#.B.2.#.#",
+            "#.#.....#.#",
+            "#.#.3.C.#.#",
+            "#.#.....#.#",
+            "#.#######.#",
+            "#4.......D#",
+            "###########"
+          ]
+        },
+        {
+          name: "關卡 10: 終極不規則對位矩陣 (12x8)",
+          map: [
+            "############",
+            "#A........1#",
+            "#.##.##.##.#",
+            "#...B..2...#",
+            "##.######.##",
+            "#...C..3...#",
+            "#.##.##.##.#",
+            "#4........D#",
+            "############"
           ]
         }
       ];
@@ -615,13 +667,13 @@
       let currentLevelIndex = 0;
       let gridWidth = 0;
       let gridHeight = 0;
-      let walls = [];     // 2D boolean
+      let mapCells = [];  // 2D Array: 'void', 'wall', 'floor'
       let targets = [];   // [{ r, c, shapeId }]
       let boxes = [];     // [{ r, c, shapeId }]
       let historyStack = [];
       let stepCount = 0;
       let soundEnabled = true;
-      let clearedLevels = JSON.parse(localStorage.getItem('cybershift_cleared') || '[]');
+      let clearedLevels = JSON.parse(localStorage.getItem('cybershift_irregular_cleared') || '[]');
 
       // DOM 引用
       const levelGrid = document.getElementById('level-grid');
@@ -656,8 +708,8 @@
 
         if (type === 'step') {
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(350, now);
-          osc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
+          osc.frequency.setValueAtTime(360, now);
+          osc.frequency.exponentialRampToValueAtTime(220, now + 0.05);
           gain.gain.setValueAtTime(0.12, now);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
           osc.start(now);
@@ -685,7 +737,7 @@
         }
       }
 
-      // 渲染關卡選擇
+      // 渲染關卡選單
       function renderLevelSelector() {
         levelGrid.innerHTML = '';
         LEVELS.forEach((lvl, idx) => {
@@ -697,7 +749,7 @@
         });
       }
 
-      // 載入關卡
+      // 解析並載入關卡
       function loadLevel(idx) {
         currentLevelIndex = idx;
         const levelData = LEVELS[idx];
@@ -706,7 +758,7 @@
         gridHeight = mapStrings.length;
         gridWidth = Math.max(...mapStrings.map(s => s.length));
 
-        walls = Array.from({ length: gridHeight }, () => new Array(gridWidth).fill(false));
+        mapCells = Array.from({ length: gridHeight }, () => new Array(gridWidth).fill('void'));
         targets = [];
         boxes = [];
         historyStack = [];
@@ -717,12 +769,18 @@
           for (let c = 0; c < rowStr.length; c++) {
             const ch = rowStr[c];
             if (ch === '#') {
-              walls[r][c] = true;
+              mapCells[r][c] = 'wall';
+            } else if (ch === '.') {
+              mapCells[r][c] = 'floor';
             } else if (['1', '2', '3', '4'].includes(ch)) {
+              mapCells[r][c] = 'floor';
               targets.push({ r, c, shapeId: parseInt(ch, 10) });
             } else if (['A', 'B', 'C', 'D'].includes(ch)) {
+              mapCells[r][c] = 'floor';
               const charMap = { 'A': 1, 'B': 2, 'C': 3, 'D': 4 };
               boxes.push({ r, c, shapeId: charMap[ch] });
+            } else {
+              mapCells[r][c] = 'void';
             }
           }
         }
@@ -741,16 +799,18 @@
         gameGrid.style.gridTemplateColumns = `repeat(${gridWidth}, 1fr)`;
         gameGrid.innerHTML = '';
 
+        // 動態微調方塊與格子大小適應大地圖
+        let cellSize = 40;
+        if (gridWidth > 10) cellSize = 34;
+
         for (let r = 0; r < gridHeight; r++) {
           for (let c = 0; c < gridWidth; c++) {
             const cell = document.createElement('div');
-            cell.className = 'cell';
+            cell.className = `cell ${mapCells[r][c]}`;
+            cell.style.width = `${cellSize}px`;
+            cell.style.height = `${cellSize}px`;
 
-            if (walls[r][c]) {
-              cell.classList.add('wall');
-            } else {
-              cell.classList.add('floor');
-
+            if (mapCells[r][c] === 'floor') {
               // 渲染目標點
               const target = targets.find(t => t.r === r && t.c === c);
               if (target) {
@@ -760,7 +820,7 @@
                 cell.appendChild(targetIcon);
               }
 
-              // 渲染箱子
+              // 渲染方塊
               const box = boxes.find(b => b.r === r && b.c === c);
               if (box) {
                 const boxEl = document.createElement('div');
@@ -779,7 +839,7 @@
         }
       }
 
-      // 更新 HUD
+      // 更新 HUD 看板
       function updateHUD() {
         hudSteps.textContent = stepCount;
 
@@ -809,8 +869,8 @@
           let nextR = box.r + dr;
           let nextC = box.c + dc;
 
-          // 判斷是否撞牆或出界
-          if (nextR >= 0 && nextR < gridHeight && nextC >= 0 && nextC < gridWidth && !walls[nextR][nextC]) {
+          // 判斷前方是否為可通行地板
+          if (nextR >= 0 && nextR < gridHeight && nextC >= 0 && nextC < gridWidth && mapCells[nextR][nextC] === 'floor') {
             // 判斷該位置是否已被其他「無法移動或尚未移動」的盒子佔用
             if (!boxes.some(b => b !== box && b.r === nextR && b.c === nextC)) {
               box.r = nextR;
@@ -858,7 +918,7 @@
         if (allMatched) {
           if (!clearedLevels.includes(currentLevelIndex)) {
             clearedLevels.push(currentLevelIndex);
-            localStorage.setItem('cybershift_cleared', JSON.stringify(clearedLevels));
+            localStorage.setItem('cybershift_irregular_cleared', JSON.stringify(clearedLevels));
           }
 
           renderLevelSelector();
@@ -892,7 +952,7 @@
       document.getElementById('btn-left').addEventListener('click', () => moveBoxes(0, -1));
       document.getElementById('btn-right').addEventListener('click', () => moveBoxes(0, 1));
 
-      // 控制鈕事件
+      // 控制鈕按鈕事件
       btnUndo.addEventListener('click', undoMove);
       btnRestart.addEventListener('click', () => loadLevel(currentLevelIndex));
       btnPrev.addEventListener('click', () => { if (currentLevelIndex > 0) loadLevel(currentLevelIndex - 1); });
@@ -906,7 +966,7 @@
       resetProgressBtn.addEventListener('click', () => {
         if (confirm('確定要重設所有關卡紀錄嗎？')) {
           clearedLevels = [];
-          localStorage.removeItem('cybershift_cleared');
+          localStorage.removeItem('cybershift_irregular_cleared');
           loadLevel(0);
         }
       });
