@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================================
-       CyberShift Design System - 無區分箱子與開放佈局風格
+       CyberShift Design System - 無區分箱子與長方形大按鍵風格
        ========================================================================== */
     :root {
       --bg-dark: #080a0f;
@@ -277,10 +277,10 @@
       100% { transform: scale(1.05); opacity: 0.95; }
     }
 
-    /* 動態方塊 Box (所有箱子完全相同，能量金屬風) */
+    /* 動態方塊 Box (預設金屬藍) */
     .box {
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       border-radius: 6px;
       background: radial-gradient(circle at 30% 30%, #00f3ff, #005588);
       border: 2px solid #ffffff;
@@ -289,11 +289,11 @@
       transition: all 0.15s ease-out;
     }
 
-    /* 任意箱子落於目標點時的亮光提示 */
+    /* 盒子到達目標位置時：變亮綠色，且下方虛線會被遮蓋不顯示 */
     .box.matched {
-      background: radial-gradient(circle at 30% 30%, #00ff66, #006622);
+      background: radial-gradient(circle at 30% 30%, #00ff66, #008833);
       border-color: #ffffff;
-      box-shadow: 0 0 16px var(--neon-green);
+      box-shadow: 0 0 18px var(--neon-green);
       animation: box-matched-bounce 0.3s ease-out;
     }
 
@@ -308,7 +308,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       width: 100%;
     }
 
@@ -336,35 +336,47 @@
       box-shadow: 0 0 12px var(--neon-cyan);
     }
 
-    /* D-Pad 十字鍵 */
+    /* 長方形 2x2 控制面板 (放大按鍵 & 形成長方形區域 & 按下色彩反饋) */
     .dpad-container {
       display: grid;
-      grid-template-columns: repeat(3, 44px);
-      grid-template-rows: repeat(3, 44px);
-      gap: 5px;
+      grid-template-columns: repeat(2, 95px);
+      grid-template-rows: repeat(2, 54px);
+      gap: 8px;
+      padding: 10px;
+      background: #0b0f17;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 243, 255, 0.15);
     }
 
     .dpad-btn {
-      background: #161e2e;
-      border: 1px solid var(--border-color);
+      background: linear-gradient(145deg, #182232, #0f1622);
+      border: 1.5px solid var(--neon-cyan);
       color: var(--neon-cyan);
-      font-size: 1.1rem;
+      font-size: 1.3rem;
+      font-weight: bold;
       border-radius: 6px;
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: pointer;
+      transition: all 0.1s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     }
 
-    .dpad-btn:active {
+    /* 按下狀態：亮高飽和螢光青色 (Active Feedback) */
+    .dpad-btn:active, .dpad-btn.pressed {
       background: var(--neon-cyan);
-      color: #000;
+      color: #080a0f;
+      border-color: #ffffff;
+      box-shadow: 0 0 22px var(--neon-cyan), inset 0 0 10px #ffffff;
+      transform: scale(0.94);
     }
 
-    .dpad-up { grid-column: 2; grid-row: 1; }
+    .dpad-up { grid-column: 1; grid-row: 1; }
+    .dpad-down { grid-column: 2; grid-row: 1; }
     .dpad-left { grid-column: 1; grid-row: 2; }
-    .dpad-right { grid-column: 3; grid-row: 2; }
-    .dpad-down { grid-column: 2; grid-row: 3; }
+    .dpad-right { grid-column: 2; grid-row: 2; }
 
     /* 通關 Modal */
     .modal-overlay {
@@ -411,6 +423,7 @@
       .cell { width: 28px; height: 28px; }
       .box { width: 22px; height: 22px; }
       .target-icon { width: 20px; height: 20px; }
+      .dpad-container { grid-template-columns: repeat(2, 75px); grid-template-rows: repeat(2, 45px); }
       .game-title { font-size: 1rem; }
     }
   </style>
@@ -465,12 +478,12 @@
           <button id="btn-next" class="btn-cyber">下一關</button>
         </div>
 
-        <!-- 十字 D-Pad -->
+        <!-- 長方形 2x2 控制區域 (放大按鍵，按下亮色反饋) -->
         <div class="dpad-container">
-          <button class="dpad-btn dpad-up" id="btn-up">▲</button>
-          <button class="dpad-btn dpad-left" id="btn-left">◀</button>
-          <button class="dpad-btn dpad-right" id="btn-right">▶</button>
-          <button class="dpad-btn dpad-down" id="btn-down">▼</button>
+          <button class="dpad-btn dpad-up" id="btn-up">▲ 上</button>
+          <button class="dpad-btn dpad-down" id="btn-down">▼ 下</button>
+          <button class="dpad-btn dpad-left" id="btn-left">◀ 左</button>
+          <button class="dpad-btn dpad-right" id="btn-right">▶ 右</button>
         </div>
       </div>
     </main>
@@ -493,7 +506,6 @@
      */
     document.addEventListener('DOMContentLoaded', () => {
       // 10 個經過演算法 100% 驗證、無角落死角設計的不規則關卡
-      // 符號：' ' 虛無, '#' 牆壁, '.' 地板, 'T' 目標點, 'B' 箱子
       const LEVELS = [
         {
           name: "關卡 01: 錯位大廳 (9x7)",
@@ -667,6 +679,12 @@
       const winModal = document.getElementById('win-modal');
       const modalCloseBtn = document.getElementById('modal-close-btn');
 
+      // D-Pad 按鈕 DOM
+      const dpadUp = document.getElementById('btn-up');
+      const dpadDown = document.getElementById('btn-down');
+      const dpadLeft = document.getElementById('btn-left');
+      const dpadRight = document.getElementById('btn-right');
+
       // Web Audio API 音效引擎
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -784,21 +802,22 @@
             cell.style.height = `${cellSize}px`;
 
             if (mapCells[r][c] === 'floor') {
-              // 渲染目標位置
               const target = targets.find(t => t.r === r && t.c === c);
-              if (target) {
+              const box = boxes.find(b => b.r === r && b.c === c);
+
+              // 只有當「沒有箱子」停在該位置時，才渲染虛線目標點；當有箱子時完全不顯示虛線
+              if (target && !box) {
                 const targetIcon = document.createElement('div');
                 targetIcon.className = 'target-icon';
                 cell.appendChild(targetIcon);
               }
 
               // 渲染箱子
-              const box = boxes.find(b => b.r === r && b.c === c);
               if (box) {
                 const boxEl = document.createElement('div');
                 boxEl.className = 'box';
 
-                // 只要此位置是目標點，即亮綠光
+                // 當箱子位在目標點時：套用 .matched 樣式變綠色
                 if (target) {
                   boxEl.classList.add('matched');
                 }
@@ -901,22 +920,43 @@
         }
       }
 
-      // 鍵盤事件綁定
+      // 按鍵發光反饋微調
+      function triggerButtonEffect(btn) {
+        if (!btn) return;
+        btn.classList.add('pressed');
+        setTimeout(() => btn.classList.remove('pressed'), 120);
+      }
+
+      // 鍵盤事件綁定（同步觸發畫面上按鍵的反饋效果）
       document.addEventListener('keydown', (e) => {
         switch (e.key) {
-          case 'ArrowUp': case 'w': case 'W': moveBoxes(-1, 0); break;
-          case 'ArrowDown': case 's': case 'S': moveBoxes(1, 0); break;
-          case 'ArrowLeft': case 'a': case 'A': moveBoxes(0, -1); break;
-          case 'ArrowRight': case 'd': case 'D': moveBoxes(0, 1); break;
-          case 'z': case 'Z': undoMove(); break;
+          case 'ArrowUp': case 'w': case 'W':
+            triggerButtonEffect(dpadUp);
+            moveBoxes(-1, 0);
+            break;
+          case 'ArrowDown': case 's': case 'S':
+            triggerButtonEffect(dpadDown);
+            moveBoxes(1, 0);
+            break;
+          case 'ArrowLeft': case 'a': case 'A':
+            triggerButtonEffect(dpadLeft);
+            moveBoxes(0, -1);
+            break;
+          case 'ArrowRight': case 'd': case 'D':
+            triggerButtonEffect(dpadRight);
+            moveBoxes(0, 1);
+            break;
+          case 'z': case 'Z':
+            undoMove();
+            break;
         }
       });
 
-      // 觸控 D-Pad 綁定
-      document.getElementById('btn-up').addEventListener('click', () => moveBoxes(-1, 0));
-      document.getElementById('btn-down').addEventListener('click', () => moveBoxes(1, 0));
-      document.getElementById('btn-left').addEventListener('click', () => moveBoxes(0, -1));
-      document.getElementById('btn-right').addEventListener('click', () => moveBoxes(0, 1));
+      // 觸控 / 滑鼠 D-Pad 綁定
+      dpadUp.addEventListener('click', () => moveBoxes(-1, 0));
+      dpadDown.addEventListener('click', () => moveBoxes(1, 0));
+      dpadLeft.addEventListener('click', () => moveBoxes(0, -1));
+      dpadRight.addEventListener('click', () => moveBoxes(0, 1));
 
       // 控制鈕按鈕事件
       btnUndo.addEventListener('click', undoMove);
