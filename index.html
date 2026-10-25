@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CyberSlide: 幾何對位 - 全域滑移解謎</title>
+  <title>CyberShift: 幾何矩陣 - 全域單格移位</title>
   <!-- Google Fonts: Orbitron & Rajdhani -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================================
-       CyberSlide Aesthetics - 全域滑移幾何賽博風格
+       CyberShift Visual Theme (單格全域移位賽博風格)
        ========================================================================== */
     :root {
       --bg-dark: #080a0f;
@@ -134,7 +134,7 @@
       align-items: center;
     }
 
-    /* 10 關選關列表 */
+    /* 關卡選單 */
     .level-selector-grid {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
@@ -182,7 +182,7 @@
       box-shadow: 0 0 10px var(--neon-green);
     }
 
-    /* HUD 資訊看板 */
+    /* HUD 看板 */
     .hud-info {
       display: flex;
       justify-content: space-between;
@@ -213,7 +213,7 @@
       color: #ffffff;
     }
 
-    /* 遊戲畫布與地圖 */
+    /* 核心地圖網格 */
     .board-container {
       background: #090c12;
       border: 2px solid var(--border-color);
@@ -256,7 +256,7 @@
       border: 1px solid rgba(42, 54, 79, 0.4);
     }
 
-    /* 目標區 Target Slot */
+    /* 目標位置 Target */
     .target-icon {
       width: 28px;
       height: 28px;
@@ -278,7 +278,7 @@
       100% { transform: scale(1.05); opacity: 1; }
     }
 
-    /* 全域滑移動態箱子 */
+    /* 動態方塊 Box */
     .box {
       width: 36px;
       height: 36px;
@@ -290,7 +290,7 @@
       font-size: 1.1rem;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
       z-index: 10;
-      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+      transition: all 0.15s ease-out;
     }
 
     .box.box-1 { background: radial-gradient(circle, #00ff66, #008833); border: 2px solid #ffffff; color: #000; box-shadow: 0 0 12px var(--neon-green); }
@@ -310,7 +310,7 @@
       100% { transform: scale(1); }
     }
 
-    /* 控制列與 D-Pad */
+    /* 控制面板 */
     .control-panel {
       display: flex;
       flex-direction: column;
@@ -374,7 +374,7 @@
     .dpad-right { grid-column: 3; grid-row: 2; }
     .dpad-down { grid-column: 2; grid-row: 3; }
 
-    /* 全通關 Modal */
+    /* 通關 Modal */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -430,8 +430,8 @@
   <div class="game-wrapper">
     <header class="game-header">
       <div>
-        <h1 class="game-title">CyberSlide // 幾何對位</h1>
-        <p class="game-subtitle">SIMULTANEOUS BLOCK SLIDING PUZZLE</p>
+        <h1 class="game-title">CyberShift // 幾何矩陣</h1>
+        <p class="game-subtitle">GLOBAL 1-GRID STEP MATRIX PUZZLE</p>
       </div>
       <div class="header-actions">
         <button id="sound-btn" class="btn-icon">音效: ON</button>
@@ -440,7 +440,7 @@
     </header>
 
     <main class="game-body">
-      <!-- 關卡選擇列表 -->
+      <!-- 關卡選擇 -->
       <div id="level-grid" class="level-selector-grid"></div>
 
       <!-- HUD 看板 -->
@@ -450,7 +450,7 @@
           <span id="hud-level" class="hud-val">01 / 10</span>
         </div>
         <div class="hud-item">
-          <span class="hud-label">滑移步數</span>
+          <span class="hud-label">移動步數</span>
           <span id="hud-steps" class="hud-val">0</span>
         </div>
         <div class="hud-item">
@@ -459,12 +459,12 @@
         </div>
       </div>
 
-      <!-- 核心地圖畫布 -->
+      <!-- 遊戲網格 -->
       <div class="board-container">
         <div id="game-grid" class="game-grid"></div>
       </div>
 
-      <!-- 控制面板 -->
+      <!-- 操作面板 -->
       <div class="control-panel">
         <div class="action-buttons">
           <button id="btn-undo" class="btn-cyber">復原 (Undo)</button>
@@ -473,7 +473,7 @@
           <button id="btn-next" class="btn-cyber">下一關</button>
         </div>
 
-        <!-- 觸控/點擊 D-Pad -->
+        <!-- 十字 D-Pad -->
         <div class="dpad-container">
           <button class="dpad-btn dpad-up" id="btn-up">▲</button>
           <button class="dpad-btn dpad-left" id="btn-left">◀</button>
@@ -484,12 +484,12 @@
     </main>
   </div>
 
-  <!-- 全通關 Modal -->
+  <!-- 通關 Modal -->
   <div id="win-modal" class="modal-overlay">
     <div class="modal-panel">
       <h2 class="modal-title">ALL STAGES ALIGNED</h2>
       <p class="modal-desc">
-        恭喜！您已成功運用牆壁障礙與全域滑移動力學，完成全部幾何圖形的對位與重構！
+        恭喜！您已成功掌握全域單格移位規則，完成全部關卡的幾何對位！
       </p>
       <button id="modal-close-btn" class="btn-cyber" style="border-color:var(--neon-green); color:var(--neon-green);">返回關卡</button>
     </div>
@@ -497,7 +497,7 @@
 
   <script>
     /**
-     * CyberSlide Global Simultaneous Sliding Engine
+     * CyberShift Engine (Global 1-Tile Movement Engine)
      */
     document.addEventListener('DOMContentLoaded', () => {
       // 幾何圖形定義：
@@ -509,99 +509,92 @@
         4: { name: 'Diamond', symbol: '◆', class: 'box-4', targetClass: 'target-4' }
       };
 
-      // 10 個經過精心嚴謹測試的全域滑移關卡
+      // 10 個專為單格同步移位設計的關卡
       const LEVELS = [
         {
-          name: "關卡 01: 直線對位",
+          name: "關卡 01: 平移一格",
           map: [
-            "#######",
-            "#A...1#",
-            "#######"
+            "######",
+            "#A..1#",
+            "######"
           ]
         },
         {
           name: "關卡 02: 障礙卡位",
           map: [
+            "######",
+            "#A..1#",
+            "#.#.2#",
+            "#B...#",
+            "######"
+          ]
+        },
+        {
+          name: "關卡 03: 錯位高低",
+          map: [
             "#######",
             "#A...1#",
             "#..#..#",
-            "#B...2#",
-            "#######"
-          ]
-        },
-        {
-          name: "關卡 03: 錯位高低差",
-          map: [
-            "#######",
-            "#A...1#",
-            "#.#.2.#",
-            "#B....#",
-            "#######"
-          ]
-        },
-        {
-          name: "關卡 04: 十字死角",
-          map: [
-            "########",
-            "#..#...#",
-            "#A...1.#",
-            "#...#..#",
-            "#..B.2.#",
-            "########"
-          ]
-        },
-        {
-          name: "關卡 05: 三體滑移",
-          map: [
-            "#########",
-            "#A....1.#",
-            "#..#....#",
-            "#B....2.#",
-            "#....#..#",
-            "#C....3.#",
-            "#########"
-          ]
-        },
-        {
-          name: "關卡 06: 角落碰撞",
-          map: [
-            "#######",
-            "#A..#1#",
-            "#.#...#",
             "#B..2.#",
             "#######"
           ]
         },
         {
-          name: "關卡 07: 彼此阻擋 (相互借力)",
+          name: "關卡 04: 同步排隊",
           map: [
             "#######",
-            "#A.B..#",
-            "#..#1.#",
+            "#A.B.1#",
             "#...2.#",
             "#######"
           ]
         },
         {
-          name: "關卡 08: 四色四象對位",
+          name: "關卡 05: 牆壁滯留",
+          map: [
+            "########",
+            "#A.#...#",
+            "#..#1.2#",
+            "#B.....#",
+            "########"
+          ]
+        },
+        {
+          name: "關卡 06: 三體同步",
+          map: [
+            "########",
+            "#A...1.#",
+            "#B.#.2.#",
+            "#C...3.#",
+            "########"
+          ]
+        },
+        {
+          name: "關卡 07: 交叉錯格",
+          map: [
+            "#######",
+            "#A..2.#",
+            "#.#.#.#",
+            "#B..1.#",
+            "#######"
+          ]
+        },
+        {
+          name: "關卡 08: 4色矩陣",
           map: [
             "#########",
-            "#A..#..1#",
-            "#B...#.2#",
-            "#C.#...3#",
-            "#D...#.4#",
+            "#A.B.C.D#",
+            "#.#.#.#.#",
+            "#1.2.3.4#",
             "#########"
           ]
         },
         {
-          name: "關卡 09: 迴廊滑移迷宮",
+          name: "關卡 09: 迷宮卡格",
           map: [
             "#########",
             "#A..#..1#",
-            "#.#...#.#",
-            "#..B.2..#",
-            "#.#...#.#",
-            "#C..#..3#",
+            "#.#.B.#.#",
+            "#C..2..3#",
             "#########"
           ]
         },
@@ -610,10 +603,9 @@
           map: [
             "###########",
             "#A...#...1#",
-            "#.B....2..#",
-            "#..#C#....#",
-            "#...3#...D#",
-            "#......4..#",
+            "#.B.#..2..#",
+            "#...C#...3#",
+            "#D.#...4..#",
             "###########"
           ]
         }
@@ -629,7 +621,7 @@
       let historyStack = [];
       let stepCount = 0;
       let soundEnabled = true;
-      let clearedLevels = JSON.parse(localStorage.getItem('cyberslide_cleared') || '[]');
+      let clearedLevels = JSON.parse(localStorage.getItem('cybershift_cleared') || '[]');
 
       // DOM 引用
       const levelGrid = document.getElementById('level-grid');
@@ -662,22 +654,22 @@
 
         const now = audioCtx.currentTime;
 
-        if (type === 'slide') {
+        if (type === 'step') {
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(300, now);
-          osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
-          gain.gain.setValueAtTime(0.15, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+          osc.frequency.setValueAtTime(350, now);
+          osc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
           osc.start(now);
-          osc.stop(now + 0.1);
+          osc.stop(now + 0.05);
         } else if (type === 'match') {
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(523.25, now);
           osc.frequency.setValueAtTime(659.25, now + 0.08);
           gain.gain.setValueAtTime(0.2, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
           osc.start(now);
-          osc.stop(now + 0.25);
+          osc.stop(now + 0.2);
         } else if (type === 'clear') {
           [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
             const o = audioCtx.createOscillator();
@@ -693,7 +685,7 @@
         }
       }
 
-      // 渲染關卡列表
+      // 渲染關卡選擇
       function renderLevelSelector() {
         levelGrid.innerHTML = '';
         LEVELS.forEach((lvl, idx) => {
@@ -802,56 +794,43 @@
         hudMatched.textContent = `${matchedCount} / ${boxes.length}`;
       }
 
-      // 全域同步滑移算法 (Global Simultaneous Slide Engine)
-      function slideBoxes(dr, dc) {
-        // 依據滑動方向對盒子進行排序，確保前端的盒子先滑動
+      // ⚡⚡⚡ 核心：全域單格同步平移演算法 ⚡⚡⚡
+      function moveBoxes(dr, dc) {
+        // 依據移動方向對盒子進行排序，確保最前方的盒子優先結算移動
         let sortedBoxes = [...boxes];
-        if (dr === -1) sortedBoxes.sort((a, b) => a.r - b.r);        // 向上：上方的盒子先移動
-        else if (dr === 1) sortedBoxes.sort((a, b) => b.r - a.r);   // 向下：下方的盒子先移動
-        else if (dc === -1) sortedBoxes.sort((a, b) => a.c - b.c);  // 向左：左側的盒子先移動
-        else if (dc === 1) sortedBoxes.sort((a, b) => b.c - a.c);   // 向右：右側的盒子先移動
+        if (dr === -1) sortedBoxes.sort((a, b) => a.r - b.r);        // 向上：上方盒子先走
+        else if (dr === 1) sortedBoxes.sort((a, b) => b.r - a.r);   // 向下：下方盒子先走
+        else if (dc === -1) sortedBoxes.sort((a, b) => a.c - b.c);  // 向左：左側盒子先走
+        else if (dc === 1) sortedBoxes.sort((a, b) => b.c - a.c);   // 向右：右側盒子先走
 
         let movedAny = false;
 
-        // 模擬推演所有盒子滑動至撞牆或撞到其他盒子
         sortedBoxes.forEach(box => {
-          let currR = box.r;
-          let currC = box.c;
+          let nextR = box.r + dr;
+          let nextC = box.c + dc;
 
-          while (true) {
-            let nextR = currR + dr;
-            let nextC = currC + dc;
-
-            // 檢查邊界與牆壁
-            if (nextR < 0 || nextR >= gridHeight || nextC < 0 || nextC >= gridWidth || walls[nextR][nextC]) {
-              break;
+          // 判斷是否撞牆或出界
+          if (nextR >= 0 && nextR < gridHeight && nextC >= 0 && nextC < gridWidth && !walls[nextR][nextC]) {
+            // 判斷該位置是否已被其他「無法移動或尚未移動」的盒子佔用
+            if (!boxes.some(b => b !== box && b.r === nextR && b.c === nextC)) {
+              box.r = nextR;
+              box.c = nextC;
+              movedAny = true;
             }
-
-            // 檢查是否碰撞到其他已停止的盒子
-            if (boxes.some(b => b !== box && b.r === nextR && b.c === nextC)) {
-              break;
-            }
-
-            currR = nextR;
-            currC = nextC;
-            movedAny = true;
           }
-
-          box.r = currR;
-          box.c = currC;
         });
 
         if (movedAny) {
           saveHistory();
           stepCount++;
-          playSound('slide');
+          playSound('step');
           renderBoard();
           updateHUD();
           checkVictory();
         }
       }
 
-      // 歷史備份與復原
+      // 歷史備份與 Undo
       function saveHistory() {
         historyStack.push({
           boxes: boxes.map(b => ({ ...b })),
@@ -864,7 +843,7 @@
         const lastState = historyStack.pop();
         boxes = lastState.boxes;
         stepCount = lastState.stepCount;
-        playSound('slide');
+        playSound('step');
         renderBoard();
         updateHUD();
       }
@@ -879,7 +858,7 @@
         if (allMatched) {
           if (!clearedLevels.includes(currentLevelIndex)) {
             clearedLevels.push(currentLevelIndex);
-            localStorage.setItem('cyberslide_cleared', JSON.stringify(clearedLevels));
+            localStorage.setItem('cybershift_cleared', JSON.stringify(clearedLevels));
           }
 
           renderLevelSelector();
@@ -890,7 +869,7 @@
           } else {
             playSound('match');
             if (currentLevelIndex < LEVELS.length - 1) {
-              setTimeout(() => loadLevel(currentLevelIndex + 1), 600);
+              setTimeout(() => loadLevel(currentLevelIndex + 1), 500);
             }
           }
         }
@@ -899,21 +878,21 @@
       // 鍵盤事件綁定
       document.addEventListener('keydown', (e) => {
         switch (e.key) {
-          case 'ArrowUp': case 'w': case 'W': slideBoxes(-1, 0); break;
-          case 'ArrowDown': case 's': case 'S': slideBoxes(1, 0); break;
-          case 'ArrowLeft': case 'a': case 'A': slideBoxes(0, -1); break;
-          case 'ArrowRight': case 'd': case 'D': slideBoxes(0, 1); break;
+          case 'ArrowUp': case 'w': case 'W': moveBoxes(-1, 0); break;
+          case 'ArrowDown': case 's': case 'S': moveBoxes(1, 0); break;
+          case 'ArrowLeft': case 'a': case 'A': moveBoxes(0, -1); break;
+          case 'ArrowRight': case 'd': case 'D': moveBoxes(0, 1); break;
           case 'z': case 'Z': undoMove(); break;
         }
       });
 
       // 觸控 D-Pad 綁定
-      document.getElementById('btn-up').addEventListener('click', () => slideBoxes(-1, 0));
-      document.getElementById('btn-down').addEventListener('click', () => slideBoxes(1, 0));
-      document.getElementById('btn-left').addEventListener('click', () => slideBoxes(0, -1));
-      document.getElementById('btn-right').addEventListener('click', () => slideBoxes(0, 1));
+      document.getElementById('btn-up').addEventListener('click', () => moveBoxes(-1, 0));
+      document.getElementById('btn-down').addEventListener('click', () => moveBoxes(1, 0));
+      document.getElementById('btn-left').addEventListener('click', () => moveBoxes(0, -1));
+      document.getElementById('btn-right').addEventListener('click', () => moveBoxes(0, 1));
 
-      // 控制鈕按鈕事件
+      // 控制鈕事件
       btnUndo.addEventListener('click', undoMove);
       btnRestart.addEventListener('click', () => loadLevel(currentLevelIndex));
       btnPrev.addEventListener('click', () => { if (currentLevelIndex > 0) loadLevel(currentLevelIndex - 1); });
@@ -927,7 +906,7 @@
       resetProgressBtn.addEventListener('click', () => {
         if (confirm('確定要重設所有關卡紀錄嗎？')) {
           clearedLevels = [];
-          localStorage.removeItem('cyberslide_cleared');
+          localStorage.removeItem('cybershift_cleared');
           loadLevel(0);
         }
       });
